@@ -1,33 +1,37 @@
 package com.example.demo.controller;
 
-import com.example.demo.dao.UserRepository;
 import com.example.demo.entity.User;
-import com.example.demo.utils.JwtUtil;
+import com.example.demo.service.UserService;
+import com.example.demo.utils.TokenUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/auth")
 public class UserController {
-    private final UserRepository userRepository;
-    private final JwtUtil jwtUtil;
-
+    private final UserService userService;
     @Autowired
-    public UserController(UserRepository userRepository, JwtUtil jwtUtil) {
-        this.userRepository = userRepository;
-        this.jwtUtil = jwtUtil;
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
     @PostMapping("/login")
-    @CrossOrigin(origins = "*")
     public ResponseEntity<?> login(@RequestBody User user) {
-        User foundUser = userRepository.findByUsernameAndPassword(user.getUsername(), user.getPassword());
+        User foundUser = userService.login(user.getUsername(), user.getPassword());
         if (foundUser != null) {
-            String token = jwtUtil.generateToken(foundUser);
+            String token = TokenUtil.generateToken(foundUser);
             return ResponseEntity.ok(token);
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("账号或密码错误！");
         }
+    }
+
+    @GetMapping("/checkToken")
+    public Boolean checkSessionToken(HttpServletRequest request) {
+        String token = request.getHeader("sessionToken");
+        return TokenUtil.verify(token);
     }
 }
