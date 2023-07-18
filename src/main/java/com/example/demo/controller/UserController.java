@@ -30,8 +30,9 @@ public class UserController {
     }
 
     @GetMapping("/checkToken")
-    public Boolean checkSessionToken(HttpServletRequest request) {
-        String token = request.getHeader("sessionToken");
+    public Boolean checkToken(HttpServletRequest request) {
+        String token = request.getHeader("token");
+        System.out.println(token);
         return TokenUtil.verify(token);
     }
 }
