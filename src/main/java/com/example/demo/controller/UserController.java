@@ -32,7 +32,6 @@ public class UserController {
     @GetMapping("/checkToken")
     public Boolean checkToken(HttpServletRequest request) {
         String token = request.getHeader("token");
-        System.out.println(token);
         return TokenUtil.verify(token);
     }
 }
