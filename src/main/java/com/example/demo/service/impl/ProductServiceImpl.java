@@ -18,8 +18,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product findById(String id) throws EntityNotFoundException {
-        return repository.findById(id).orElseThrow(() -> new EntityNotFoundException(id));
+    public Product findById(int id) throws EntityNotFoundException {
+        return repository.findById(id).orElseThrow(() -> new EntityNotFoundException(String.valueOf(id)));
     }
 
     @Override
@@ -33,13 +33,13 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> findByCategory(String category) {
-        return repository.findByCategory(category);
+    public List<Product> findByCategoryName(String categoryName) {
+        return repository.findByCategoryName(categoryName);
     }
 
     @Override
-    public List<Product> findByNameAndCategory(String name, String category) {
-        return repository.findByNameAndCategory(name, category);
+    public List<Product> findByNameAndCategoryName(String productName, String categoryName) {
+        return repository.findByNameAndCategoryName(productName, categoryName);
     }
 
     @Override

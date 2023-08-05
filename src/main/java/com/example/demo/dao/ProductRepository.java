@@ -6,10 +6,12 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-public interface ProductRepository extends JpaRepository<Product, String> {
+public interface ProductRepository extends JpaRepository<Product, Integer> {
     List<Product> findByName(String name);
-    List<Product> findByCategory(String category);
-    List<Product> findByNameAndCategory(String name, String category);
-    @Query (value = "SELECT p FROM Product p WHERE p.price > ?1 AND p.price < ?2")
+    @Query("select p from Product p where p.category.name = ?1")
+    List<Product> findByCategoryName(String categoryName);
+    @Query("select p from Product p where p.name = ?1 and p.category.name = ?2")
+    List<Product> findByNameAndCategoryName(String productName, String categoryName);
+    @Query (value = "select p from Product p where p.price > ?1 and p.price < ?2")
     List<Product> findByPriceRange(double min, double max);
 }

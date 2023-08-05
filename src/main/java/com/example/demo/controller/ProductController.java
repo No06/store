@@ -5,10 +5,7 @@ import com.example.demo.service.ProductService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -22,13 +19,12 @@ public class ProductController {
     }
 
     @GetMapping("/getAll")
-    public ResponseEntity<?> getAll() {
-        List<Product> products = productService.findAll();
-        return ResponseEntity.ok(products);
+    public List<Product> getAll() {
+        return productService.findAll();
     }
 
-    @PostMapping("/getById")
-    public ResponseEntity<?> getById(String id) {
+    @GetMapping("/getById")
+    public ResponseEntity<?> getById(@RequestParam("id") int id) {
         Product getProduct;
         try {
             getProduct = productService.findById(id);
@@ -38,23 +34,23 @@ public class ProductController {
         return ResponseEntity.ok(getProduct);
     }
 
-    @PostMapping("/getByName")
-    public ResponseEntity<?> getByName(String name) {
-        return ResponseEntity.ok(productService.findByName(name));
+    @GetMapping("/getByName")
+    public List<Product> getByName(@RequestParam("name") String name) {
+        return productService.findByName(name);
     }
 
-    @PostMapping("/getByCategory")
-    public ResponseEntity<?> getByCategory(String category) {
-        return ResponseEntity.ok(productService.findByCategory(category));
+    @GetMapping("/getByCategory")
+    public List<Product> getByCategory(@RequestParam("categoryName") String categoryName) {
+        return productService.findByCategoryName(categoryName);
     }
 
-    @PostMapping("/getByNameAndCategory")
-    public ResponseEntity<?> getByNameAndCategory(String name, String category) {
-        return ResponseEntity.ok(productService.findByNameAndCategory(name, category));
+    @GetMapping("/getByNameAndCategory")
+    public List<Product> getByNameAndCategory(@RequestParam("productName") String productName, @RequestParam("categoryName") String categoryName) {
+        return productService.findByNameAndCategoryName(productName, categoryName);
     }
 
-    @PostMapping("/getByPriceRange")
-    public ResponseEntity<?> getByPriceRange(double min, double max) {
+    @GetMapping("/getByPriceRange")
+    public ResponseEntity<?> getByPriceRange(@RequestParam("min") double min, @RequestParam("max") double max) {
         return ResponseEntity.ok(productService.findByPriceRange(min, max));
     }
 }

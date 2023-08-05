@@ -5,10 +5,10 @@ import com.example.demo.entity.Product;
 import java.util.List;
 
 public interface ProductService {
-    Product findById(String id);
+    Product findById(int id);
     List<Product> findAll();
     List<Product> findByName(String name);
-    List<Product> findByCategory(String category);
-    List<Product> findByNameAndCategory(String name, String category);
+    List<Product> findByCategoryName(String categoryName);
+    List<Product> findByNameAndCategoryName(String productName, String categoryName);
     List<Product> findByPriceRange(double min, double max);
 }

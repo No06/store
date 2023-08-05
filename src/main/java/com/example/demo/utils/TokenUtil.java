@@ -11,7 +11,7 @@ import java.util.Date;
 public class TokenUtil {
     // 有效时长
     private static final long EXPIRE_TIME= 1000*60*60*10;
-    // 私钥 需随机生成
+    // 私钥 需随机生成ss
     private static final String SECRET_KEY = "4ac59271c598d70afaf591f3f55dd22615d41c35a60d9e5d769690f3d569085d";
 
     // generate a token for a given user
