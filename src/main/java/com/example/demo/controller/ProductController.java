@@ -1,6 +1,8 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.Product;
+import com.example.demo.entity.ProductCategory;
+import com.example.demo.service.ProductCategoryService;
 import com.example.demo.service.ProductService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,14 +15,21 @@ import java.util.List;
 @RequestMapping("/product")
 public class ProductController {
     private final ProductService productService;
+    private final ProductCategoryService categoryService;
     @Autowired
-    public ProductController(ProductService productService) {
+    public ProductController(ProductService productService, ProductCategoryService categoryService) {
         this.productService = productService;
+        this.categoryService = categoryService;
     }
 
     @GetMapping("/getAll")
     public List<Product> getAll() {
         return productService.findAll();
+    }
+
+    @GetMapping("/getAllCategory")
+    public List<ProductCategory> getAllCategory() {
+        return categoryService.findAll();
     }
 
     @GetMapping("/getById")
@@ -52,5 +61,10 @@ public class ProductController {
     @GetMapping("/getByPriceRange")
     public ResponseEntity<?> getByPriceRange(@RequestParam("min") double min, @RequestParam("max") double max) {
         return ResponseEntity.ok(productService.findByPriceRange(min, max));
+    }
+
+    @PutMapping("/update")
+    public Product updateProduct(@RequestBody Product product) {
+        return productService.save(product);
     }
 }

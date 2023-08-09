@@ -4,6 +4,7 @@ import com.example.demo.dao.ProductRepository;
 import com.example.demo.entity.Product;
 import com.example.demo.service.ProductService;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +20,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product findById(int id) throws EntityNotFoundException {
-        return repository.findById(id).orElseThrow(() -> new EntityNotFoundException(String.valueOf(id)));
+        return repository.findById(id).orElseThrow(() -> new EntityNotFoundException("商品ID:"+ id +"不存在"));
     }
 
     @Override
@@ -45,5 +46,14 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<Product> findByPriceRange(double min, double max) {
         return repository.findByPriceRange(min, max);
+    }
+
+    @Override
+    public Product save(Product product) {
+        Product oldProduct = repository.findById(product.getId()).orElseThrow(
+                () -> new EntityNotFoundException(String.valueOf(product.getId()))
+        );
+        BeanUtils.copyProperties(oldProduct, product);
+        return repository.save(oldProduct);
     }
 }

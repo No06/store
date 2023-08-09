@@ -3,32 +3,50 @@ package com.example.demo.entity;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 @Entity
 @Table(name = "products")
+@DynamicUpdate
+@DynamicInsert
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Product {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
+    @Column(length = 20, nullable = false)
     private String name;
-    private BigDecimal price;
-    @Column(precision = 2, scale = 2)
+
+    @Column(nullable = false)
+    @ColumnDefault("0")
+    private BigDecimal price = BigDecimal.ZERO;
+
+    @Column(nullable = false, precision = 2, scale = 2)
+    @ColumnDefault("0")
     @PositiveOrZero
-    private BigDecimal discount;
-    private int stock;
-    private String description;
+    private BigDecimal discount = BigDecimal.ZERO;
+
+    @Column(nullable = false)
+    @ColumnDefault("0")
+    private int stock = 0;
+
+    @Column(nullable = false)
+    @ColumnDefault("''")
+    private String description = "";
 
     @ManyToOne
-    @JoinColumn(name = "category_id")
+    @JoinColumn(name = "category_id", nullable = false)
     private ProductCategory category;
 
-    @OneToMany(mappedBy = "product")
+    @OneToMany(mappedBy = "product", orphanRemoval = true)
     private List<ProductImage> images;
 
     public int getId() {
