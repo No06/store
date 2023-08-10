@@ -5,6 +5,7 @@ import com.auth0.jwt.JWTCreator;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.example.demo.entity.User;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.Date;
 
@@ -45,12 +46,19 @@ public class TokenUtil {
     }
 
     public static Boolean verify(String token) {
-//        final String tokenUsername = extractUsername(token);
         try {
             JWT.require(Algorithm.HMAC256(SECRET_KEY)).build().verify(token);
             return !isTokenExpired(token);
         } catch (JWTVerificationException e) {
             return false;
         }
+    }
+    public static Boolean verifyFromRequest(HttpServletRequest request) {
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7);
+            return TokenUtil.verify(token);
+        }
+        return false;
     }
 }

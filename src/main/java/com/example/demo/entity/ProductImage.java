@@ -10,7 +10,7 @@ import jakarta.persistence.*;
 public class ProductImage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @Column(columnDefinition="tinytext")
     private String image_url;

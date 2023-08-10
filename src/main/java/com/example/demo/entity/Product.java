@@ -3,7 +3,6 @@ package com.example.demo.entity;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
@@ -20,27 +19,27 @@ import java.util.List;
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @Column(length = 20, nullable = false)
     private String name;
 
     @Column(nullable = false)
     @ColumnDefault("0")
-    private BigDecimal price = BigDecimal.ZERO;
+    private BigDecimal price;
 
     @Column(nullable = false, precision = 2, scale = 2)
     @ColumnDefault("0")
     @PositiveOrZero
-    private BigDecimal discount = BigDecimal.ZERO;
+    private BigDecimal discount;
 
     @Column(nullable = false)
     @ColumnDefault("0")
-    private int stock = 0;
+    private Integer stock;
 
     @Column(nullable = false)
     @ColumnDefault("''")
-    private String description = "";
+    private String description;
 
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
@@ -81,11 +80,11 @@ public class Product {
         this.discount = discount;
     }
 
-    public int getStock() {
+    public Integer getStock() {
         return stock;
     }
 
-    public void setStock(int stock) {
+    public void setStock(Integer stock) {
         this.stock = stock;
     }
 

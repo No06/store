@@ -53,7 +53,24 @@ public class ProductServiceImpl implements ProductService {
         Product oldProduct = repository.findById(product.getId()).orElseThrow(
                 () -> new EntityNotFoundException(String.valueOf(product.getId()))
         );
-        BeanUtils.copyProperties(oldProduct, product);
+        if (product.getName() != null) {
+            oldProduct.setName(product.getName());
+        }
+        if (product.getPrice() != null) {
+            oldProduct.setPrice(product.getPrice());
+        }
+        if (product.getDiscount() != null) {
+            oldProduct.setDiscount(product.getDiscount());
+        }
+        if (product.getStock() != null) {
+            oldProduct.setStock(product.getStock());
+        }
+        if (product.getDescription() != null) {
+            oldProduct.setDescription(product.getDescription());
+        }
+        if (product.getCategory() != null) {
+            oldProduct.setCategory(product.getCategory());
+        }
         return repository.save(oldProduct);
     }
 }
