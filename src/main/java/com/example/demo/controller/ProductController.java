@@ -6,6 +6,7 @@ import com.example.demo.service.ProductCategoryService;
 import com.example.demo.service.ProductService;
 import com.example.demo.utils.TokenUtil;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -65,7 +66,8 @@ public class ProductController {
     }
 
     @PutMapping("/update")
+    @ResponseBody
     public Product updateProduct(@RequestBody Product product) {
-        return productService.save(product);
+        return productService.update(product);
     }
 }

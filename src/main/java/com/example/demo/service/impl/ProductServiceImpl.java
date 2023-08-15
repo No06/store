@@ -2,6 +2,7 @@ package com.example.demo.service.impl;
 
 import com.example.demo.dao.ProductRepository;
 import com.example.demo.entity.Product;
+import com.example.demo.entity.ProductImage;
 import com.example.demo.service.ProductService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.BeanUtils;
@@ -49,7 +50,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product save(Product product) {
+    public Product update(Product product) {
         Product oldProduct = repository.findById(product.getId()).orElseThrow(
                 () -> new EntityNotFoundException(String.valueOf(product.getId()))
         );
@@ -70,6 +71,12 @@ public class ProductServiceImpl implements ProductService {
         }
         if (product.getCategory() != null) {
             oldProduct.setCategory(product.getCategory());
+        }
+        if (product.getImages() != null) {
+            oldProduct.getImages().clear();
+            for (ProductImage image: product.getImages()) {
+                oldProduct.addImage(image);
+            }
         }
         return repository.save(oldProduct);
     }

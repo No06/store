@@ -3,11 +3,12 @@ package com.example.demo.controller;
 import com.example.demo.entity.User;
 import com.example.demo.service.UserService;
 import com.example.demo.utils.TokenUtil;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.security.sasl.AuthenticationException;
 
 @RestController
 @RequestMapping("/auth")
@@ -30,7 +31,11 @@ public class UserController {
     }
 
     @GetMapping("/checkToken")
-    public Boolean checkToken(HttpServletRequest request) {
-        return TokenUtil.verifyFromRequest(request);
+    public Boolean checkToken(@RequestHeader String token) {
+        if (!TokenUtil.verify(token)) {
+            new AuthenticationException(token).printStackTrace();
+            return false;
+        }
+        return true;
     }
 }

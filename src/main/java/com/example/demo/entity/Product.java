@@ -15,7 +15,7 @@ import java.util.List;
 @Table(name = "products")
 @DynamicUpdate
 @DynamicInsert
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id", scope = Product.class)
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,8 +28,8 @@ public class Product {
     @ColumnDefault("0")
     private BigDecimal price;
 
-    @Column(nullable = false, precision = 2, scale = 2)
-    @ColumnDefault("0")
+    @Column(nullable = false, precision = 3, scale = 2)
+    @ColumnDefault("1")
     @PositiveOrZero
     private BigDecimal discount;
 
@@ -45,14 +45,14 @@ public class Product {
     @JoinColumn(name = "category_id", nullable = false)
     private ProductCategory category;
 
-    @OneToMany(mappedBy = "product", orphanRemoval = true)
+    @OneToMany(mappedBy = "product", cascade = CascadeType.MERGE, orphanRemoval = true)
     private List<ProductImage> images;
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -106,6 +106,10 @@ public class Product {
 
     public List<ProductImage> getImages() {
         return images;
+    }
+
+    public void addImage(ProductImage productImage) {
+        images.add(productImage);
     }
 
     public void setImages(List<ProductImage> images) {
