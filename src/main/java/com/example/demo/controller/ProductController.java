@@ -66,7 +66,6 @@ public class ProductController {
     }
 
     @PutMapping("/update")
-    @ResponseBody
     public Product updateProduct(@RequestBody Product product) {
         return productService.update(product);
     }

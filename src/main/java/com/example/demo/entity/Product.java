@@ -45,7 +45,7 @@ public class Product {
     @JoinColumn(name = "category_id", nullable = false)
     private ProductCategory category;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.MERGE, orphanRemoval = true)
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductImage> images;
 
     public Integer getId() {
