@@ -1,6 +1,6 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.dao.ProductCategoryRepository;
+import com.example.demo.repository.ProductCategoryRepository;
 import com.example.demo.entity.ProductCategory;
 import com.example.demo.service.ProductCategoryService;
 import jakarta.persistence.EntityNotFoundException;

@@ -33,7 +33,7 @@ public class UserController {
     @GetMapping("/checkToken")
     public Boolean checkToken(@RequestHeader String token) {
         if (!TokenUtil.verify(token)) {
-            new AuthenticationException(token).printStackTrace();
+            new AuthenticationException("JWT: " + token + ", is Expired.").printStackTrace();
             return false;
         }
         return true;

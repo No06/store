@@ -65,8 +65,13 @@ public class ProductController {
         return ResponseEntity.ok(productService.findByPriceRange(min, max));
     }
 
-    @PutMapping("/update")
-    public Product updateProduct(@RequestBody Product product) {
-        return productService.update(product);
+    @PutMapping("/save")
+    public ResponseEntity<?> updateProduct(@RequestBody Product product) {
+        try {
+            productService.save(product);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(e.getMessage());
+        }
+        return ResponseEntity.ok("");
     }
 }

@@ -11,5 +11,5 @@ public interface ProductService {
     List<Product> findByCategoryName(String categoryName);
     List<Product> findByNameAndCategoryName(String productName, String categoryName);
     List<Product> findByPriceRange(double min, double max);
-    Product update(Product product);
+    Product save(Product product);
 }

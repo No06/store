@@ -1,11 +1,10 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.dao.ProductRepository;
+import com.example.demo.repository.ProductRepository;
 import com.example.demo.entity.Product;
 import com.example.demo.entity.ProductImage;
 import com.example.demo.service.ProductService;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -50,10 +49,15 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product update(Product product) {
-        Product oldProduct = repository.findById(product.getId()).orElseThrow(
-                () -> new EntityNotFoundException(String.valueOf(product.getId()))
-        );
+    public Product save(Product product) {
+        Product oldProduct;
+        try {
+            oldProduct = repository.findById(product.getId()).orElseThrow(
+                    () -> new EntityNotFoundException(String.valueOf(product.getId()))
+            );
+        } catch (Exception e) {
+            return repository.save(product);
+        }
         if (product.getName() != null) {
             oldProduct.setName(product.getName());
         }
