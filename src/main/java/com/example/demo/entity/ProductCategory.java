@@ -11,16 +11,16 @@ import java.util.List;
 
 @Entity
 @Table(name = "product_categorys")
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id", scope = ProductCategory.class)
+@JsonIdentityInfo(generator = ObjectIdGenerators.None.class, property = "id", scope = ProductCategory.class)
 public class ProductCategory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @NotNull
+    @Column(nullable = false)
     private String name;
 
-    @NotNull
+    @Column(nullable = false)
     @ColumnDefault("''")
     private String description;
 

@@ -46,6 +46,7 @@ public class Product {
     private ProductCategory category;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("rank asc")
     private List<ProductImage> images;
 
     public Integer getId() {

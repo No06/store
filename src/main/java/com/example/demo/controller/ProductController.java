@@ -8,9 +8,11 @@ import com.example.demo.utils.TokenUtil;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -61,8 +63,23 @@ public class ProductController {
     }
 
     @GetMapping("/getByPriceRange")
-    public ResponseEntity<?> getByPriceRange(@RequestParam("min") double min, @RequestParam("max") double max) {
-        return ResponseEntity.ok(productService.findByPriceRange(min, max));
+    public List<Product> getByPriceRange(@RequestParam("min") Double min, @RequestParam("max") Double max) {
+        return productService.findByPriceRange(min, max);
+    }
+
+    @GetMapping("/getAllBySpec")
+    public List<Product> getAllBySpec(
+            @RequestParam(defaultValue = "false") boolean inStock,
+            @RequestParam(required = false) Double minPrice,
+            @RequestParam(required = false) Double maxPrice,
+            @RequestParam(required = false) Integer[] category_id
+    ) {
+        return productService.findAllBySpec(inStock, minPrice, maxPrice, category_id);
+    }
+
+    @GetMapping("/getCountProductsByCategory")
+    public List<Object[]> getProductCountByCategory() {
+        return productService.countProductsByCategory();
     }
 
     @PutMapping("/save")
@@ -73,5 +90,15 @@ public class ProductController {
             return ResponseEntity.status(500).body(e.getMessage());
         }
         return ResponseEntity.ok("");
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> delete(@PathVariable Integer id) {
+        try {
+            productService.deleteById(id);
+        } catch (EmptyResultDataAccessException ex) {
+            throw new EntityNotFoundException("Entity with ID: [" + id + "] was not found");
+        }
+        return ResponseEntity.ok("Delete success");
     }
 }

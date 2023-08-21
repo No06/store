@@ -8,7 +8,7 @@ import org.hibernate.annotations.ColumnDefault;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @Column(length = 16, nullable = false)
     private String username;
@@ -20,11 +20,11 @@ public class User {
     @ColumnDefault("0")
     private Boolean isAdmin;
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
