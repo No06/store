@@ -4,15 +4,12 @@ import com.example.demo.entity.Product;
 import com.example.demo.entity.ProductCategory;
 import com.example.demo.service.ProductCategoryService;
 import com.example.demo.service.ProductService;
-import com.example.demo.utils.TokenUtil;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -36,8 +33,8 @@ public class ProductController {
         return categoryService.findAll();
     }
 
-    @GetMapping("/getById")
-    public ResponseEntity<?> getById(@RequestParam("id") int id) {
+    @GetMapping("/getById/{id}")
+    public ResponseEntity<?> getById(@PathVariable Integer id) {
         Product getProduct;
         try {
             getProduct = productService.findById(id);
