@@ -1,12 +1,12 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.entity.ProductCategory;
 import com.example.demo.repository.ProductRepository;
 import com.example.demo.entity.Product;
 import com.example.demo.entity.ProductImage;
 import com.example.demo.service.ProductService;
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -19,9 +19,12 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository repository;
 
+    private final EntityManager entityManager;
+
     @Autowired
-    public ProductServiceImpl(ProductRepository productRepository) {
+    public ProductServiceImpl(ProductRepository productRepository, EntityManager entityManager) {
         this.repository = productRepository;
+        this.entityManager = entityManager;
     }
 
     @Override
@@ -77,13 +80,14 @@ public class ProductServiceImpl implements ProductService {
                 }
                 predicates.add(criteriaBuilder.or(categoryPredicates));
             }
+
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
         return repository.findAll(spec);
     }
 
     @Override
-    public Product save(Product product) {
+    public void save(Product product) {
         Product oldProduct;
         try {
             oldProduct = repository.findById(product.getId()).orElseThrow(
@@ -91,7 +95,8 @@ public class ProductServiceImpl implements ProductService {
             );
         } catch (Exception e) {
             product.getImages().forEach((image) -> image.setProduct(product));
-            return repository.save(product);
+            repository.save(product);
+            return;
         }
         if (product.getName() != null) {
             oldProduct.setName(product.getName());
@@ -117,7 +122,7 @@ public class ProductServiceImpl implements ProductService {
                 oldProduct.addImage(image);
             }
         }
-        return repository.save(oldProduct);
+        repository.save(oldProduct);
     }
 
     @Override
