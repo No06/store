@@ -11,7 +11,7 @@ public interface ProductService {
     List<Product> findByCategoryName(String categoryName);
     List<Product> findByNameAndCategoryName(String productName, String categoryName);
     List<Product> findByPriceRange(Double min, Double max);
-    List<Product> findAllBySpec(boolean inStock, Double minPrice, Double maxPrice, Integer[] category_id);
+    List<Product> findAllBySpec(String name, boolean inStock, Double minPrice, Double maxPrice, Integer[] category_id);
     void save(Product product);
     void deleteById(Integer id);
     List<Object[]> countProductsByCategory();

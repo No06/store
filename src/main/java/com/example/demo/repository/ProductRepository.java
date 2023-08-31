@@ -11,6 +11,8 @@ import java.util.List;
 public interface ProductRepository extends JpaRepository<Product, Integer>, JpaSpecificationExecutor<Product> {
     List<Product> findByName(String name);
 
+    List<Product> findByNameLike(String name);
+
     @Query("select p from Product p where p.category.name = ?1")
     List<Product> findByCategoryName(String categoryName);
 

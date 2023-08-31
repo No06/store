@@ -58,9 +58,13 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> findAllBySpec(boolean inStock, Double minPrice, Double maxPrice, Integer[] category_id) {
+    public List<Product> findAllBySpec(String name, boolean inStock, Double minPrice, Double maxPrice, Integer[] category_id) {
         Specification<Product> spec = (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
+            // 关键词查找
+            if (name != null) {
+                predicates.add(criteriaBuilder.like(root.get("name"), "%" + name + "%"));
+            }
             // 仅看有货
             if (inStock) {
                 predicates.add(criteriaBuilder.greaterThan(root.get("stock"), 0));
