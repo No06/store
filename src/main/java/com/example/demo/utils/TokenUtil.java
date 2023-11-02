@@ -4,7 +4,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTCreator;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.example.demo.entity.User;
+import com.example.demo.entity.dto.UserDTO;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.Date;
@@ -16,7 +16,7 @@ public class TokenUtil {
     private static final String SECRET_KEY = "4ac59271c598d70afaf591f3f55dd22615d41c35a60d9e5d769690f3d569085d";
 
     // generate a token for a given user
-    public static String generateToken(User user) {
+    public static String generateToken(UserDTO user) {
         JWTCreator.Builder builder = JWT.create();
         builder.withClaim("username", user.getUsername());
         builder.withClaim("isAdmin", user.getAdmin());
@@ -45,20 +45,18 @@ public class TokenUtil {
         return extractExpiration(token).before(new Date());
     }
 
-    public static Boolean verify(String token) {
-        try {
-            JWT.require(Algorithm.HMAC256(SECRET_KEY)).build().verify(token);
-            return !isTokenExpired(token);
-        } catch (JWTVerificationException e) {
-            return false;
+    public static void verify(String token) {
+        JWT.require(Algorithm.HMAC256(SECRET_KEY)).build().verify(token);
+        if (isTokenExpired(token)) {
+            throw new JWTVerificationException("登录已过期");
         }
     }
-    public static Boolean verifyFromRequest(HttpServletRequest request) {
+    public static void verifyFromRequest(HttpServletRequest request) throws Exception {
         String authHeader = request.getHeader("Authorization");
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
-            return TokenUtil.verify(token);
+            TokenUtil.verify(token);
         }
-        return false;
+        throw new Exception("请求头不正确");
     }
 }

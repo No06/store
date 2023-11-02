@@ -1,31 +1,21 @@
-package com.example.demo.entity;
+package com.example.demo.entity.dto;
 
-import com.example.demo.entity.dto.UserDTO;
-import jakarta.persistence.*;
-import org.hibernate.annotations.ColumnDefault;
+import com.example.demo.entity.User;
 import org.springframework.beans.BeanUtils;
 
-@Entity
-@Table(name = "user")
-public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class UserDTO {
     private Integer id;
 
-    @Column(length = 16, nullable = false)
     private String username;
 
-    @Column(length = 30, nullable = false)
     private String password;
 
-    @Column(nullable = false)
-    @ColumnDefault("0")
     private Boolean isAdmin;
 
-    public static User fromUserDTO(UserDTO userDTO) {
-        User user = new User();
-        BeanUtils.copyProperties(userDTO, user);
-        return user;
+    public static UserDTO fromUser(User user) {
+        UserDTO target = new UserDTO();
+        BeanUtils.copyProperties(user, target);
+        return target;
     }
 
     public Integer getId() {

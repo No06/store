@@ -35,13 +35,13 @@ public class ProductController {
 
     @GetMapping("/getById/{id}")
     public ResponseEntity<?> getById(@PathVariable Integer id) {
-        Product getProduct;
+        Product product;
         try {
-            getProduct = productService.findById(id);
+            product = productService.findById(id);
         } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(getProduct);
+        return ResponseEntity.ok(product);
     }
 
     @GetMapping("/getByName")

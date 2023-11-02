@@ -1,12 +1,11 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.repository.ProductRepository;
 import com.example.demo.entity.Product;
 import com.example.demo.entity.ProductImage;
+import com.example.demo.repository.ProductRepository;
 import com.example.demo.service.ProductService;
-import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.persistence.criteria.*;
+import jakarta.persistence.criteria.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -19,12 +18,9 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository repository;
 
-    private final EntityManager entityManager;
-
     @Autowired
-    public ProductServiceImpl(ProductRepository productRepository, EntityManager entityManager) {
+    public ProductServiceImpl(ProductRepository productRepository) {
         this.repository = productRepository;
-        this.entityManager = entityManager;
     }
 
     @Override
