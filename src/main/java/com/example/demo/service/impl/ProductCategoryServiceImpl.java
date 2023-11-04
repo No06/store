@@ -1,7 +1,7 @@
 package com.example.demo.service.impl;
 
+import com.example.demo.entity.dto.ProductCategoryDTO;
 import com.example.demo.repository.ProductCategoryRepository;
-import com.example.demo.entity.ProductCategory;
 import com.example.demo.service.ProductCategoryService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,12 +19,17 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
     }
 
     @Override
-    public List<ProductCategory> findAll() {
-        return repository.findAll();
+    public List<ProductCategoryDTO> findAll() {
+        return repository.findAll().stream().map(ProductCategoryDTO::fromPO).toList();
     }
 
     @Override
-    public ProductCategory findById(Integer id) {
-        return repository.findById(id).orElseThrow(() -> new EntityNotFoundException(String.valueOf(id)));
+    public List<ProductCategoryDTO> findAllVO() {
+        return repository.findAllVO().stream().map(ProductCategoryDTO::fromPO).toList();
+    }
+
+    @Override
+    public ProductCategoryDTO findById(Integer id) {
+        return ProductCategoryDTO.fromPO(repository.findById(id).orElseThrow(() -> new EntityNotFoundException(String.valueOf(id))));
     }
 }

@@ -6,22 +6,37 @@ import com.example.demo.entity.ProductImage;
 import org.springframework.beans.BeanUtils;
 
 import java.math.BigDecimal;
+import java.util.List;
 
-public class ProductItemDTO {
+public class ProductDTO {
+    private Integer id;
+
     private String name;
 
     private BigDecimal price;
 
+    private BigDecimal discount;
+
     private Integer stock;
+
+    private String description;
 
     private ProductCategory category;
 
-    private ProductImage image;
+    private List<ProductImage> images;
 
-    public static ProductItemDTO fromProduct(Product product) {
-        ProductItemDTO target = new ProductItemDTO();
+    public static ProductDTO fromProduct(Product product) {
+        ProductDTO target = new ProductDTO();
         BeanUtils.copyProperties(product, target);
         return target;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -40,12 +55,28 @@ public class ProductItemDTO {
         this.price = price;
     }
 
+    public BigDecimal getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(BigDecimal discount) {
+        this.discount = discount;
+    }
+
     public Integer getStock() {
         return stock;
     }
 
     public void setStock(Integer stock) {
         this.stock = stock;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public ProductCategory getCategory() {
@@ -56,11 +87,12 @@ public class ProductItemDTO {
         this.category = category;
     }
 
-    public ProductImage getImage() {
-        return image;
+    public List<ProductImage> getImages() {
+        return images;
     }
 
-    public void setImage(ProductImage image) {
-        this.image = image;
+    public void setImages(List<ProductImage> images) {
+        this.images = images;
     }
+
 }

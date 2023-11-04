@@ -3,8 +3,6 @@ package com.example.demo.entity;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.util.List;
@@ -13,6 +11,12 @@ import java.util.List;
 @Table(name = "product_categorys")
 @JsonIdentityInfo(generator = ObjectIdGenerators.None.class, property = "id", scope = ProductCategory.class)
 public class ProductCategory {
+    public ProductCategory() {}
+    public ProductCategory(Integer id, String name, String description) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

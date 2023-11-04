@@ -1,10 +1,11 @@
 package com.example.demo.service;
 
-import com.example.demo.entity.ProductCategory;
+import com.example.demo.entity.dto.ProductCategoryDTO;
 
 import java.util.List;
 
 public interface ProductCategoryService {
-    List<ProductCategory> findAll();
-    ProductCategory findById(Integer id);
+    List<ProductCategoryDTO> findAll();
+    List<ProductCategoryDTO> findAllVO();
+    ProductCategoryDTO findById(Integer id);
 }

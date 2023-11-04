@@ -11,15 +11,13 @@ import java.util.List;
 public interface ProductRepository extends JpaRepository<Product, Integer>, JpaSpecificationExecutor<Product> {
     List<Product> findByName(String name);
 
-    List<Product> findByNameLike(String name);
-
     @Query("select p from Product p where p.category.name = ?1")
     List<Product> findByCategoryName(String categoryName);
 
     @Query("select p from Product p where p.name = ?1 and p.category.name = ?2")
     List<Product> findByNameAndCategoryName(String productName, String categoryName);
 
-    @Query (value = "select p from Product p where p.price > ?1 and p.price < ?2")
+    @Query ("select p from Product p where p.price > ?1 and p.price < ?2")
     List<Product> findByPriceRange(Double min, Double max);
 
     @EntityGraph(
@@ -30,5 +28,5 @@ public interface ProductRepository extends JpaRepository<Product, Integer>, JpaS
     List<Product> findAllWithMinRankImage();
 
     @Query("SELECT p.category, COUNT(p) FROM Product p GROUP BY p.category")
-    List<Object[]> countProductsByCategory();
+    List<Object[]> countByCategory();
 }

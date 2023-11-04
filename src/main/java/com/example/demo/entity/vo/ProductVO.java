@@ -1,10 +1,14 @@
-package com.example.demo.entity.dto;
+package com.example.demo.entity.vo;
 
 import com.example.demo.entity.ProductCategory;
+import com.example.demo.entity.ProductImage;
+import com.example.demo.entity.dto.ProductDTO;
+import org.springframework.beans.BeanUtils;
 
 import java.math.BigDecimal;
+import java.util.List;
 
-public class ProductFormDTO {
+public class ProductVO {
     private Integer id;
 
     private String name;
@@ -18,6 +22,14 @@ public class ProductFormDTO {
     private String description;
 
     private ProductCategory category;
+
+    private List<ProductImage> images;
+
+    public static ProductVO fromProductDTO(ProductDTO productDTO) {
+        ProductVO productVO = new ProductVO();
+        BeanUtils.copyProperties(productDTO, productVO);
+        return productVO;
+    }
 
     public Integer getId() {
         return id;
@@ -73,5 +85,13 @@ public class ProductFormDTO {
 
     public void setCategory(ProductCategory category) {
         this.category = category;
+    }
+
+    public List<ProductImage> getImages() {
+        return images;
+    }
+
+    public void setImages(List<ProductImage> images) {
+        this.images = images;
     }
 }

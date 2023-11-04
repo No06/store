@@ -2,11 +2,15 @@ package com.example.demo.service.impl;
 
 import com.example.demo.entity.Product;
 import com.example.demo.entity.ProductImage;
+import com.example.demo.entity.dto.ProductDTO;
 import com.example.demo.repository.ProductRepository;
 import com.example.demo.service.ProductService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -24,37 +28,56 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product findById(Integer id) throws EntityNotFoundException {
-        return repository.findById(id).orElseThrow(() -> new EntityNotFoundException("商品ID:"+ id +"不存在"));
+    public ProductDTO findById(Integer id) throws EntityNotFoundException {
+        return ProductDTO.fromProduct(repository.findById(id).orElseThrow(() -> new EntityNotFoundException("商品ID:"+ id +"不存在")));
     }
 
     @Override
-    public List<Product> findAll() {
-        return repository.findAll();
+    public List<ProductDTO> findAll() {
+        return repository.findAll().stream().map(ProductDTO::fromProduct).toList();
     }
 
     @Override
-    public List<Product> findByName(String name) {
-        return repository.findByName(name);
+    public List<ProductDTO> findByName(String name) {
+        return repository.findByName(name).stream().map(ProductDTO::fromProduct).toList();
     }
 
     @Override
-    public List<Product> findByCategoryName(String categoryName) {
-        return repository.findByCategoryName(categoryName);
+    public List<ProductDTO> findByCategoryName(String categoryName) {
+        return repository.findByCategoryName(categoryName).stream().map(ProductDTO::fromProduct).toList();
     }
 
     @Override
-    public List<Product> findByNameAndCategoryName(String productName, String categoryName) {
-        return repository.findByNameAndCategoryName(productName, categoryName);
+    public List<ProductDTO> findByNameAndCategoryName(String productName, String categoryName) {
+        return repository.findByNameAndCategoryName(productName, categoryName).stream().map(ProductDTO::fromProduct).toList();
     }
 
     @Override
-    public List<Product> findByPriceRange(Double min, Double max) {
-        return repository.findByPriceRange(min, max);
+    public List<ProductDTO> findByPriceRange(Double min, Double max) {
+        return repository.findByPriceRange(min, max).stream().map(ProductDTO::fromProduct).toList();
     }
 
     @Override
-    public List<Product> findAllBySpec(String name, boolean inStock, Double minPrice, Double maxPrice, Integer[] category_id) {
+    public Page<ProductDTO> findByNameAndCategoryIdForPage(String name, Integer category_id, Integer page, Integer size) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Specification<Product> specification = (root, query, criteriaBuilder) ->  {
+            // 创建一个集合，用于存放查询条件
+            List<Predicate> predicates = new ArrayList<>();
+            if (name != null && !name.isEmpty()) {
+                Predicate predicate = criteriaBuilder.like(root.get("name"), "%" + name + "%");
+                predicates.add(predicate);
+            }
+            if (category_id != null) {
+                Predicate predicate = criteriaBuilder.equal(root.get("category").get("id"), category_id);
+                predicates.add(predicate);
+            }
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+        };
+        return repository.findAll(specification, pageable).map(ProductDTO::fromProduct);
+    }
+
+    @Override
+    public List<ProductDTO> findAllItemBySpec(String name, boolean inStock, Double minPrice, Double maxPrice, Integer[] category_id) {
         Specification<Product> spec = (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
             // 关键词查找
@@ -83,19 +106,20 @@ public class ProductServiceImpl implements ProductService {
 
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
-        return repository.findAll(spec);
+        return repository.findAll(spec).stream().map(ProductDTO::fromProduct).toList();
     }
 
     @Override
-    public void save(Product product) {
+    public void save(ProductDTO product) {
+        Product newProduct = Product.fromProductDTO(product);
         Product oldProduct;
         try {
             oldProduct = repository.findById(product.getId()).orElseThrow(
                     () -> new EntityNotFoundException(String.valueOf(product.getId()))
             );
         } catch (Exception e) {
-            product.getImages().forEach((image) -> image.setProduct(product));
-            repository.save(product);
+            product.getImages().forEach((image) -> image.setProduct(newProduct));
+            repository.save(newProduct);
             return;
         }
         if (product.getName() != null) {
@@ -131,7 +155,12 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Object[]> countProductsByCategory() {
-        return repository.countProductsByCategory();
+    public List<Object[]> countByCategory() {
+        return repository.countByCategory();
+    }
+
+    @Override
+    public Long count() {
+        return repository.count();
     }
 }

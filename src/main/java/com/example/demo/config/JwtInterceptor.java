@@ -11,10 +11,12 @@ public class JwtInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String token = request.getHeader("token");
-        if (!TokenUtil.verify(token)) {
+        try {
+            TokenUtil.verify(token);
+        } catch (Exception e) {
             response.setContentType("application/json; charset=UTF-8");
             PrintWriter writer = response.getWriter();
-            writer.print("State: " + 401 + ", Token is expired!");
+            writer.println(e.getMessage());
             writer.close();
             return false;
         }
