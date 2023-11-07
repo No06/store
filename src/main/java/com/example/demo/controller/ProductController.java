@@ -42,7 +42,7 @@ public class ProductController {
     }
 
     @GetMapping("/getById/{id}")
-    public ResponseEntity<?> getById(@PathVariable Integer id) {
+    public ResponseEntity<?> getById(@PathVariable Long id) {
         try {
             return ResponseEntity.ok(ProductVO.fromProductDTO(productService.findById(id)));
         } catch (EntityNotFoundException e) {
@@ -51,7 +51,7 @@ public class ProductController {
     }
 
     @GetMapping("/getItemById/{id}")
-    public ResponseEntity<?> getItemById(@PathVariable Integer id) {
+    public ResponseEntity<?> getItemById(@PathVariable Long id) {
         try {
             return ResponseEntity.ok(ProductItemVO.fromProductDTO(productService.findById(id)));
         } catch (EntityNotFoundException e) {
@@ -92,7 +92,7 @@ public class ProductController {
     @RequestMapping("/findAllByPage")
     public Page<ProductVO> findAllByPage(
             @RequestParam(required = false) String name,
-            @RequestParam(required = false) Integer category_id,
+            @RequestParam(required = false) Long category_id,
             @RequestParam Integer page,
             @RequestParam Integer size
     ) {
@@ -105,7 +105,7 @@ public class ProductController {
             @RequestParam(defaultValue = "false") boolean inStock,
             @RequestParam(required = false) Double minPrice,
             @RequestParam(required = false) Double maxPrice,
-            @RequestParam(required = false) Integer[] category_id
+            @RequestParam(required = false) Long[] category_id
     ) {
         return productService.findAllItemBySpec(name, inStock, minPrice, maxPrice, category_id).stream().map(ProductItemVO::fromProductDTO).toList();
     }
@@ -131,7 +131,7 @@ public class ProductController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> delete(@PathVariable Integer id) {
+    public ResponseEntity<?> delete(@PathVariable Long id) {
         try {
             productService.deleteById(id);
         } catch (EmptyResultDataAccessException ex) {

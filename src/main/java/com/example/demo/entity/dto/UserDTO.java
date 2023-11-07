@@ -4,7 +4,7 @@ import com.example.demo.entity.User;
 import org.springframework.beans.BeanUtils;
 
 public class UserDTO {
-    private Integer id;
+    private Long id;
 
     private String username;
 
@@ -18,11 +18,11 @@ public class UserDTO {
         return target;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

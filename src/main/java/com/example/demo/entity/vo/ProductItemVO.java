@@ -8,7 +8,7 @@ import org.springframework.beans.BeanUtils;
 import java.math.BigDecimal;
 
 public class ProductItemVO {
-    private Integer id;
+    private Long id;
 
     private String name;
 
@@ -33,11 +33,11 @@ public class ProductItemVO {
         return productItemVO;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

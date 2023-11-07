@@ -28,7 +28,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductDTO findById(Integer id) throws EntityNotFoundException {
+    public ProductDTO findById(Long id) throws EntityNotFoundException {
         return ProductDTO.fromProduct(repository.findById(id).orElseThrow(() -> new EntityNotFoundException("商品ID:"+ id +"不存在")));
     }
 
@@ -58,7 +58,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Page<ProductDTO> findByNameAndCategoryIdForPage(String name, Integer category_id, Integer page, Integer size) {
+    public Page<ProductDTO> findByNameAndCategoryIdForPage(String name, Long category_id, Integer page, Integer size) {
         Pageable pageable = PageRequest.of(page - 1, size);
         Specification<Product> specification = (root, query, criteriaBuilder) ->  {
             // 创建一个集合，用于存放查询条件
@@ -77,7 +77,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductDTO> findAllItemBySpec(String name, boolean inStock, Double minPrice, Double maxPrice, Integer[] category_id) {
+    public List<ProductDTO> findAllItemBySpec(String name, boolean inStock, Double minPrice, Double maxPrice, Long[] category_id) {
         Specification<Product> spec = (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
             // 关键词查找
@@ -150,7 +150,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void deleteById(Integer id) {
+    public void deleteById(Long id) {
         repository.deleteById(id);
     }
 

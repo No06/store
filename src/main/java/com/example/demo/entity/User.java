@@ -8,9 +8,16 @@ import org.springframework.beans.BeanUtils;
 @Entity
 @Table(name = "user")
 public class User {
+
+    public User() {}
+
+    public User(Long id) {
+        this.id = id;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @Column(length = 16, nullable = false)
     private String username;
@@ -28,11 +35,11 @@ public class User {
         return user;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

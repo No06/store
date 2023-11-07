@@ -4,7 +4,7 @@ import com.example.demo.entity.dto.ProductCategoryDTO;
 import org.springframework.beans.BeanUtils;
 
 public class ProductCategoryVO {
-    private Integer id;
+    private Long id;
 
     private String name;
 
@@ -16,11 +16,11 @@ public class ProductCategoryVO {
         return vo;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

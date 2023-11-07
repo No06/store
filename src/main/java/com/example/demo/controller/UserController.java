@@ -5,6 +5,7 @@ import com.example.demo.entity.dto.UserDTO;
 import com.example.demo.entity.vo.UserVO;
 import com.example.demo.service.UserService;
 import com.example.demo.utils.TokenUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,7 +42,7 @@ public class UserController {
     }
 
     @GetMapping("/info/{id}")
-    public ResponseEntity<?> info(@PathVariable Integer id, @RequestHeader String token) {
+    public ResponseEntity<?> info(@PathVariable Long id, @RequestHeader String token) {
         try {
             TokenUtil.verify(token);
             UserDTO userDTO = userService.findById(id);
@@ -54,9 +55,9 @@ public class UserController {
     }
 
     @GetMapping("/checkToken")
-    public ResponseEntity<?> checkToken(@RequestHeader String token) {
+    public ResponseEntity<?> checkToken(HttpServletRequest request) {
         try {
-            TokenUtil.verify(token);
+            TokenUtil.verifyFromRequest(request);
             return ResponseEntity.ok().build();
         } catch (JWTVerificationException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());

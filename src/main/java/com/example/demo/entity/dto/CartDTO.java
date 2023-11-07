@@ -1,26 +1,28 @@
-package com.example.demo.entity;
+package com.example.demo.entity.dto;
 
-import jakarta.persistence.*;
+import com.example.demo.entity.Cart;
+import com.example.demo.entity.Product;
+import com.example.demo.entity.User;
+import org.springframework.beans.BeanUtils;
 
 import java.math.BigDecimal;
 
-@Entity
-@Table(name = "cart")
-public class Cart {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class CartDTO {
     private Long id;
 
-    @ManyToOne
     private User user;
 
-    @ManyToOne
     private Product product;
 
     private Integer quantity;
 
     private BigDecimal subtotal;
+
+    public static CartDTO fromCart(Cart cart) {
+        CartDTO target = new CartDTO();
+        BeanUtils.copyProperties(cart, target);
+        return target;
+    }
 
     public Long getId() {
         return id;

@@ -29,7 +29,7 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
     }
 
     @Override
-    public ProductCategoryDTO findById(Integer id) {
+    public ProductCategoryDTO findById(Long id) {
         return ProductCategoryDTO.fromPO(repository.findById(id).orElseThrow(() -> new EntityNotFoundException(String.valueOf(id))));
     }
 }

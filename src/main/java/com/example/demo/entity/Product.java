@@ -21,7 +21,8 @@ import java.util.List;
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    @Column
+    private Long id;
 
     @Column(length = 30, nullable = false)
     private String name;
@@ -57,11 +58,11 @@ public class Product {
         return product;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

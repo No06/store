@@ -7,5 +7,5 @@ import java.util.List;
 public interface ProductCategoryService {
     List<ProductCategoryDTO> findAll();
     List<ProductCategoryDTO> findAllVO();
-    ProductCategoryDTO findById(Integer id);
+    ProductCategoryDTO findById(Long id);
 }

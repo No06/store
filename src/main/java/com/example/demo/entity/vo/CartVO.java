@@ -1,26 +1,25 @@
-package com.example.demo.entity;
+package com.example.demo.entity.vo;
 
-import jakarta.persistence.*;
+import com.example.demo.entity.Product;
+import com.example.demo.entity.dto.CartDTO;
+import org.springframework.beans.BeanUtils;
 
 import java.math.BigDecimal;
 
-@Entity
-@Table(name = "cart")
-public class Cart {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class CartVO {
     private Long id;
 
-    @ManyToOne
-    private User user;
-
-    @ManyToOne
     private Product product;
 
     private Integer quantity;
 
     private BigDecimal subtotal;
+
+    public static CartVO fromCartDTO(CartDTO cartDTO) {
+        CartVO target = new CartVO();
+        BeanUtils.copyProperties(cartDTO, target);
+        return target;
+    }
 
     public Long getId() {
         return id;
@@ -28,14 +27,6 @@ public class Cart {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 
     public Product getProduct() {

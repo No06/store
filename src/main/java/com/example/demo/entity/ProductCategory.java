@@ -12,14 +12,14 @@ import java.util.List;
 @JsonIdentityInfo(generator = ObjectIdGenerators.None.class, property = "id", scope = ProductCategory.class)
 public class ProductCategory {
     public ProductCategory() {}
-    public ProductCategory(Integer id, String name, String description) {
+    public ProductCategory(Long id, String name, String description) {
         this.id = id;
         this.name = name;
         this.description = description;
     }
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @Column(nullable = false)
     private String name;
@@ -31,11 +31,11 @@ public class ProductCategory {
     @OneToMany(mappedBy = "category")
     private List<Product> products;
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

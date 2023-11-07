@@ -3,7 +3,6 @@ package com.example.demo.entity;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
@@ -16,7 +15,7 @@ import org.hibernate.annotations.DynamicUpdate;
 public class ProductImage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @Column(columnDefinition="tinytext")
     private String image_url;
@@ -29,11 +28,11 @@ public class ProductImage {
     @ColumnDefault("0")
     private Integer rank;
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

@@ -22,6 +22,9 @@ public class UserServiceImpl implements UserService {
         if (userRepository.findByUsername(userDTO.getUsername()) != null) {
             throw new Exception("用户已存在");
         }
+        if (userDTO.getAdmin() == null) {
+            userDTO.setAdmin(false);
+        }
         User user = User.fromUserDTO(userDTO);
         userRepository.save(user);
     }
@@ -36,7 +39,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO findById(Integer id) throws Exception {
+    public UserDTO findById(Long id) throws Exception {
         Optional<User> user = userRepository.findById(id);
         if (user.isEmpty()) {
             throw new Exception("根据ID未找到用户");

@@ -10,5 +10,7 @@ public class WebConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new JwtInterceptor())
                 .addPathPatterns("/product/update", "/product/delete");
+        registry.addInterceptor(new JwtInterceptor())
+                .addPathPatterns("/cart/**");
     }
 }
