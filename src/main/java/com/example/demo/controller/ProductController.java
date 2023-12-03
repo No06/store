@@ -2,7 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.dto.ProductDTO;
 import com.example.demo.entity.vo.ProductCategoryVO;
-import com.example.demo.entity.vo.ProductItemVO;
+import com.example.demo.entity.vo.ProductSimpleVO;
 import com.example.demo.entity.vo.ProductVO;
 import com.example.demo.service.ProductCategoryService;
 import com.example.demo.service.ProductService;
@@ -26,21 +26,25 @@ public class ProductController {
         this.categoryService = categoryService;
     }
 
+    // 获取所有商品
     @GetMapping("/getAll")
     public List<ProductVO> getAll() {
         return productService.findAll().stream().map(ProductVO::fromProductDTO).toList();
     }
 
+    // 获取所有商品简单信息
     @GetMapping("/getAllItems")
-    public List<ProductItemVO> getAllItems() {
-        return productService.findAll().stream().map(ProductItemVO::fromProductDTO).toList();
+    public List<ProductSimpleVO> getAllItems() {
+        return productService.findAll().stream().map(ProductSimpleVO::fromProductDTO).toList();
     }
 
+    // 获取所有商品类型
     @GetMapping("/getAllCategory")
     public List<ProductCategoryVO> getAllCategory() {
         return categoryService.findAllVO().stream().map(ProductCategoryVO::fromDTO).toList();
     }
 
+    // 根据ID获取商品
     @GetMapping("/getById/{id}")
     public ResponseEntity<?> getById(@PathVariable Long id) {
         try {
@@ -50,45 +54,53 @@ public class ProductController {
         }
     }
 
+    // 根据ID获取商品简单信息
     @GetMapping("/getItemById/{id}")
     public ResponseEntity<?> getItemById(@PathVariable Long id) {
         try {
-            return ResponseEntity.ok(ProductItemVO.fromProductDTO(productService.findById(id)));
+            return ResponseEntity.ok(ProductSimpleVO.fromProductDTO(productService.findById(id)));
         } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
     }
 
+    // 根据商品名获取所有商品
     @GetMapping("/getByName")
     public List<ProductVO> getByName(@RequestParam("name") String name) {
         return productService.findByName(name).stream().map(ProductVO::fromProductDTO).toList();
     }
 
+    // 根据商品名获取所有商品简单信息
     @GetMapping("/getItemsByName")
-    public List<ProductItemVO> getItemsByName(@RequestParam("name") String name) {
-        return productService.findByName(name).stream().map(ProductItemVO::fromProductDTO).toList();
+    public List<ProductSimpleVO> getItemsByName(@RequestParam("name") String name) {
+        return productService.findByName(name).stream().map(ProductSimpleVO::fromProductDTO).toList();
     }
 
+    // 根据类型获取所有商品
     @GetMapping("/getByCategory")
     public List<ProductVO> getByCategory(@RequestParam("categoryName") String categoryName) {
         return productService.findByCategoryName(categoryName).stream().map(ProductVO::fromProductDTO).toList();
     }
 
+    // 根据商品类型获取商品简单信息
     @GetMapping("/getItemsByCategory")
-    public List<ProductItemVO> getItemsByCategory(@RequestParam("categoryName") String categoryName) {
-        return productService.findByCategoryName(categoryName).stream().map(ProductItemVO::fromProductDTO).toList();
+    public List<ProductSimpleVO> getItemsByCategory(@RequestParam("categoryName") String categoryName) {
+        return productService.findByCategoryName(categoryName).stream().map(ProductSimpleVO::fromProductDTO).toList();
     }
 
+    // 根据商品名与类型获取商品
     @GetMapping("/getByNameAndCategory")
     public List<ProductVO> getByNameAndCategory(@RequestParam("productName") String productName, @RequestParam("categoryName") String categoryName) {
         return productService.findByNameAndCategoryName(productName, categoryName).stream().map(ProductVO::fromProductDTO).toList();
     }
 
+    // 根据价格锁定范围查找
     @GetMapping("/getByPriceRange")
-    public List<ProductItemVO> getByPriceRange(@RequestParam("min") Double min, @RequestParam("max") Double max) {
-        return productService.findByPriceRange(min, max).stream().map(ProductItemVO::fromProductDTO).toList();
+    public List<ProductSimpleVO> getByPriceRange(@RequestParam("min") Double min, @RequestParam("max") Double max) {
+        return productService.findByPriceRange(min, max).stream().map(ProductSimpleVO::fromProductDTO).toList();
     }
 
+    // 分页查找
     @RequestMapping("/findAllByPage")
     public Page<ProductVO> findAllByPage(
             @RequestParam(required = false) String name,
@@ -99,27 +111,31 @@ public class ProductController {
         return productService.findByNameAndCategoryIdForPage(name, category_id, page, size).map(ProductVO::fromProductDTO);
     }
 
+    // 模糊查找
     @GetMapping("/getAllItemBySpec")
-    public List<ProductItemVO> getAllItemBySpec(
+    public List<ProductSimpleVO> getAllItemBySpec(
             @RequestParam(required = false) String name,
             @RequestParam(defaultValue = "false") boolean inStock,
             @RequestParam(required = false) Double minPrice,
             @RequestParam(required = false) Double maxPrice,
             @RequestParam(required = false) Long[] category_id
     ) {
-        return productService.findAllItemBySpec(name, inStock, minPrice, maxPrice, category_id).stream().map(ProductItemVO::fromProductDTO).toList();
+        return productService.findAllItemBySpec(name, inStock, minPrice, maxPrice, category_id).stream().map(ProductSimpleVO::fromProductDTO).toList();
     }
 
+    // 获取总商品数
     @GetMapping("/getCount")
     public Long getCount() {
         return productService.count();
     }
 
+    // 获取商品类中商品总数
     @GetMapping("/getCountByCategory")
     public List<Object[]> getCountByCategory() {
         return productService.countByCategory();
     }
 
+    // 保存商品
     @PutMapping("/save")
     public ResponseEntity<?> updateProduct(@RequestBody ProductDTO product) {
         try {
@@ -130,6 +146,7 @@ public class ProductController {
         return ResponseEntity.ok().build();
     }
 
+    // 删除商品
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         try {

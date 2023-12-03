@@ -7,7 +7,7 @@ import org.springframework.beans.BeanUtils;
 
 import java.math.BigDecimal;
 
-public class ProductItemVO {
+public class ProductSimpleVO {
     private Long id;
 
     private String name;
@@ -22,15 +22,15 @@ public class ProductItemVO {
 
     private ProductImage image;
 
-    public static ProductItemVO fromProductDTO(ProductDTO productDTO) {
-        ProductItemVO productItemVO = new ProductItemVO();
-        BeanUtils.copyProperties(productDTO, productItemVO);
+    public static ProductSimpleVO fromProductDTO(ProductDTO productDTO) {
+        ProductSimpleVO productSimpleVO = new ProductSimpleVO();
+        BeanUtils.copyProperties(productDTO, productSimpleVO);
         try {
-            productItemVO.setImage(productDTO.getImages().get(0));
+            productSimpleVO.setImage(productDTO.getImages().get(0));
         } catch (IndexOutOfBoundsException e) {
-            productItemVO.setImage(null);
+            productSimpleVO.setImage(null);
         }
-        return productItemVO;
+        return productSimpleVO;
     }
 
     public Long getId() {

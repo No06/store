@@ -12,5 +12,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .addPathPatterns("/product/update", "/product/delete");
         registry.addInterceptor(new JwtInterceptor())
                 .addPathPatterns("/cart/**");
+        registry.addInterceptor(new JwtInterceptor())
+                .addPathPatterns("/order/**");
     }
 }
