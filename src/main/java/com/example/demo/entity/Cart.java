@@ -2,8 +2,6 @@ package com.example.demo.entity;
 
 import jakarta.persistence.*;
 
-import java.math.BigDecimal;
-
 @Entity
 @Table(name = "cart")
 public class Cart {
@@ -11,16 +9,16 @@ public class Cart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    // 对应用户
     @ManyToOne
     private User user;
-
+    // 对应商品
     @ManyToOne
     private Product product;
-
+    // 数量
     private Integer quantity;
-
-    private BigDecimal subtotal;
+    // 被选择状态
+    private Boolean isSelected;
 
     public Long getId() {
         return id;
@@ -54,11 +52,11 @@ public class Cart {
         this.quantity = quantity;
     }
 
-    public BigDecimal getSubtotal() {
-        return subtotal;
+    public Boolean getSelected() {
+        return isSelected;
     }
 
-    public void setSubtotal(BigDecimal subtotal) {
-        this.subtotal = subtotal;
+    public void setSelected(Boolean selected) {
+        isSelected = selected;
     }
 }

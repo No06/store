@@ -5,8 +5,6 @@ import com.example.demo.entity.Product;
 import com.example.demo.entity.User;
 import org.springframework.beans.BeanUtils;
 
-import java.math.BigDecimal;
-
 public class CartDTO {
     private Long id;
 
@@ -16,7 +14,7 @@ public class CartDTO {
 
     private Integer quantity;
 
-    private BigDecimal subtotal;
+    private Boolean isSelected;
 
     public static CartDTO fromCart(Cart cart) {
         CartDTO target = new CartDTO();
@@ -56,11 +54,11 @@ public class CartDTO {
         this.quantity = quantity;
     }
 
-    public BigDecimal getSubtotal() {
-        return subtotal;
+    public Boolean getSelected() {
+        return isSelected;
     }
 
-    public void setSubtotal(BigDecimal subtotal) {
-        this.subtotal = subtotal;
+    public void setSelected(Boolean selected) {
+        isSelected = selected;
     }
 }

@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -56,10 +55,8 @@ public class CartServiceImpl implements CartService {
             cart.setUser(new User(userId));
             cart.setProduct(product);
             cart.setQuantity(quantity);
-            cart.setSubtotal(product.getPrice().multiply(new BigDecimal(quantity)));
         } else {
             cart.setQuantity(cart.getQuantity() + quantity);
-            cart.setSubtotal(cart.getSubtotal().add(product.getPrice().multiply(new BigDecimal(quantity))));
         }
         cartRepository.save(cart);
     }
@@ -82,7 +79,6 @@ public class CartServiceImpl implements CartService {
             throw new CartNotFoundException("购物车不存在");
         }
         cart.setQuantity(quantity);
-        cart.setSubtotal(cart.getProduct().getPrice().multiply(new BigDecimal(quantity)));
         cartRepository.save(cart);
     }
 

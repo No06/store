@@ -1,9 +1,7 @@
 package com.example.demo.entity;
 
 import com.example.demo.entity.dto.OrderDto;
-import com.fasterxml.jackson.databind.util.BeanUtil;
 import jakarta.persistence.*;
-import org.aspectj.weaver.ast.Or;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.beans.BeanUtils;
 
@@ -46,7 +44,7 @@ public class Order {
     private BigDecimal totalPrice;
 
     // 订单商品列表
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany
     private List<OrderItem> orderItems;
 
     // 订单收货地址
