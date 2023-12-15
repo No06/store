@@ -1,6 +1,5 @@
 package com.example.demo.controller;
 
-import com.example.demo.entity.User;
 import com.example.demo.entity.dto.OrderDto;
 import com.example.demo.entity.vo.OrderVO;
 import com.example.demo.exception.OrderNotFoundException;

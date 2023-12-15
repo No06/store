@@ -70,15 +70,16 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public void updateCartQuantity(Long userId, Long productId, Integer quantity) throws CartNotFoundException {
+    public void updateCart(Long userId, CartDTO cartDTO) throws CartNotFoundException {
+        Integer quantity = cartDTO.getQuantity();
+        Long productId = cartDTO.getProduct().getId();
         if (userId == null || productId == null || quantity == null || quantity < 1) {
             throw new IllegalArgumentException("参数不合法");
         }
-        Cart cart = cartRepository.findByUserIdAndProductId(userId, productId);
-        if (cart == null) {
-            throw new CartNotFoundException("购物车不存在");
-        }
-        cart.setQuantity(quantity);
+        Cart cart = Cart.fromDTO(cartDTO);
+        User user = new User();
+        user.setId(userId);
+        cart.setUser(user);
         cartRepository.save(cart);
     }
 

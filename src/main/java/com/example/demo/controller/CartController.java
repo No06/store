@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.entity.dto.CartDTO;
 import com.example.demo.entity.vo.CartVO;
 import com.example.demo.exception.CartNotFoundException;
 import com.example.demo.exception.ProductNotFoundException;
@@ -52,14 +53,13 @@ public class CartController {
         return ResponseEntity.ok(data);
     }
 
-    @PutMapping("/update")
+    @PatchMapping("/update")
     public ResponseEntity<?> updateCartQuantity(
-            @RequestParam Long productId,
-            @RequestParam Integer quantity,
+            @RequestBody CartDTO cartDTO,
             @RequestAttribute Long userId
     ) {
         try {
-            cartService.updateCartQuantity(userId, productId, quantity);
+            cartService.updateCart(userId, cartDTO);
         } catch (CartNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }

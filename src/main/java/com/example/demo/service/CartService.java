@@ -15,7 +15,7 @@ public interface CartService {
 
     List<CartDTO> getCartByUserId(Long userId);
 
-    void updateCartQuantity(Long userId, Long productId, Integer quantity) throws CartNotFoundException;
+    void updateCart(Long userId, CartDTO cartDTO) throws CartNotFoundException;
 
     void deleteCartProduct(Long userId, Long productId);
 

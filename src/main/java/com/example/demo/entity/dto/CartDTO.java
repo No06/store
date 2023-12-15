@@ -54,11 +54,11 @@ public class CartDTO {
         this.quantity = quantity;
     }
 
-    public Boolean getSelected() {
+    public Boolean getIsSelected() {
         return isSelected;
     }
 
-    public void setSelected(Boolean selected) {
+    public void setIsSelected(Boolean selected) {
         isSelected = selected;
     }
 }
