@@ -4,7 +4,6 @@ import com.example.demo.entity.Cart;
 import com.example.demo.entity.Product;
 import com.example.demo.entity.User;
 import com.example.demo.entity.dto.CartDTO;
-import com.example.demo.exception.CartNotFoundException;
 import com.example.demo.exception.ProductNotFoundException;
 import com.example.demo.repository.CartRepository;
 import com.example.demo.repository.ProductRepository;
@@ -70,7 +69,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public void updateCart(Long userId, CartDTO cartDTO) throws CartNotFoundException {
+    public void updateCart(Long userId, CartDTO cartDTO) {
         Integer quantity = cartDTO.getQuantity();
         Long productId = cartDTO.getProduct().getId();
         if (userId == null || productId == null || quantity == null || quantity < 1) {

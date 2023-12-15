@@ -3,10 +3,12 @@ package com.example.demo.entity;
 import com.example.demo.entity.dto.CartDTO;
 import jakarta.persistence.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 import org.springframework.beans.BeanUtils;
 
 @Entity
 @Table(name = "cart")
+@DynamicInsert
 public class Cart {
 
     @Id
@@ -21,7 +23,6 @@ public class Cart {
     // 数量
     private Integer quantity;
     // 被选择状态
-    @Column(nullable = false)
     @ColumnDefault("1")
     private Boolean isSelected;
 
