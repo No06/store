@@ -9,10 +9,10 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new JwtInterceptor())
-                .addPathPatterns("/product/update", "/product/delete");
-        registry.addInterceptor(new JwtInterceptor())
-                .addPathPatterns("/cart/**");
-        registry.addInterceptor(new JwtInterceptor())
-                .addPathPatterns("/order/**");
+                .addPathPatterns("/user/info", "/user/get/defaultAddress", "/user/update/defaultAddress")
+                .addPathPatterns("/cart/**")
+                .addPathPatterns("/product/update", "/product/delete")
+                .addPathPatterns("/order/**")
+                .addPathPatterns("/address/**");
     }
 }

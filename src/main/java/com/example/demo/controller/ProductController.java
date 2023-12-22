@@ -41,7 +41,7 @@ public class ProductController {
     // 获取所有商品类型
     @GetMapping("/getAllCategory")
     public List<ProductCategoryVO> getAllCategory() {
-        return categoryService.findAllVO().stream().map(ProductCategoryVO::fromDTO).toList();
+        return categoryService.findAll().stream().map(ProductCategoryVO::fromDTO).toList();
     }
 
     // 根据ID获取商品

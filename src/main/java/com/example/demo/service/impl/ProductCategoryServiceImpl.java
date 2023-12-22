@@ -24,11 +24,6 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
     }
 
     @Override
-    public List<ProductCategoryDTO> findAllVO() {
-        return repository.findAllVO().stream().map(ProductCategoryDTO::fromPO).toList();
-    }
-
-    @Override
     public ProductCategoryDTO findById(Long id) {
         return ProductCategoryDTO.fromPO(repository.findById(id).orElseThrow(() -> new EntityNotFoundException(String.valueOf(id))));
     }
