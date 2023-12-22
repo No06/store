@@ -1,8 +1,7 @@
 package com.example.demo.controller;
 
-import com.example.demo.entity.dto.OrderDto;
+import com.example.demo.entity.dto.OrderDTO;
 import com.example.demo.entity.vo.OrderVO;
-import com.example.demo.exception.OrderNotFoundException;
 import com.example.demo.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +20,7 @@ public class OrderController {
     }
 
     @GetMapping("/getByUserId")
-    public ResponseEntity<List<OrderVO>> getAllByUserId(@RequestParam Long userId) {
+    public ResponseEntity<List<OrderVO>> getAllByUserId(@RequestAttribute Long userId) {
         return ResponseEntity.ok(service.findAllByUserId(userId).stream().map(OrderVO::fromDTO).toList());
     }
 
@@ -31,18 +30,14 @@ public class OrderController {
     }
 
     @PutMapping("/save")
-    public ResponseEntity<Object> save(@RequestBody OrderDto order, @RequestAttribute Long userId) {
-        service.save(order, userId);
+    public ResponseEntity<Object> save(@RequestBody OrderDTO order, @RequestAttribute Long userId) {
+        service.create(order, userId);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/deleteById")
     public ResponseEntity<Object> deleteById(@RequestParam Long id) {
-        try {
-            service.deleteById(id);
-        } catch (OrderNotFoundException e) {
-            ResponseEntity.badRequest().body(id);
-        }
+        service.deleteById(id);
         return ResponseEntity.ok().build();
     }
 }

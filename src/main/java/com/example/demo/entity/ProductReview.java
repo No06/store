@@ -1,13 +1,19 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.DynamicUpdate;
 
+// 商品评价
 @Entity
-@Table(name = "product_evaluations")
+@DynamicUpdate
+@Table(name = "product_reviews")
 public class ProductReview {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @OneToOne
+    private Order order;
 
     // 用户评价
     private String userReview;
@@ -15,8 +21,19 @@ public class ProductReview {
     // 卖家评价
     private String sellerReview;
 
+    // 用户追评
+    private String userAdditionReview;
+
     public Long getId() {
         return id;
+    }
+
+    public Order getOrder() {
+        return order;
+    }
+
+    public void setOrder(Order order) {
+        this.order = order;
     }
 
     public void setId(Long id) {
@@ -37,5 +54,13 @@ public class ProductReview {
 
     public void setSellerReview(String sellerReview) {
         this.sellerReview = sellerReview;
+    }
+
+    public String getUserAdditionReview() {
+        return userAdditionReview;
+    }
+
+    public void setUserAdditionReview(String userAdditionEvaluation) {
+        this.userAdditionReview = userAdditionEvaluation;
     }
 }

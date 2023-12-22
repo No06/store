@@ -2,10 +2,12 @@ package com.example.demo.entity;
 
 import com.example.demo.entity.dto.CarouselDTO;
 import jakarta.persistence.*;
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.beans.BeanUtils;
 
 @Entity
 @Table(name = "carousel")
+@DynamicUpdate
 public class Carousel {
 
     @Id

@@ -1,36 +1,23 @@
 package com.example.demo.entity.dto;
 
 import com.example.demo.entity.*;
+import com.example.demo.entity.enums.FieldStatus;
+import com.example.demo.entity.enums.OrderStatus;
 import org.springframework.beans.BeanUtils;
 
-import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
-public class OrderDto {
+public class OrderDTO {
     private Long id;
 
-    /*
-     * 订单状态
-     *
-     * 0 已取消
-     * 1 未付款
-     * 2 待发货
-     * 3 待收货
-     * 4 待确收
-     * 5 待评价
-     * 6 已完成
-     */
-    private Integer status;
+    private OrderStatus status;
 
     // 购买用户
     private User user;
 
     // 评价
     private ProductReview review;
-
-    // 订单总金额
-    private BigDecimal totalPrice;
 
     // 订单商品列表
     private List<OrderItem> orderItems;
@@ -39,31 +26,31 @@ public class OrderDto {
     private UserAddress userAddress;
 
     // 订单创建时间
-    private Date createTime;
+    private LocalDateTime createTime;
 
     // 订单取消时间
-    private Date cancelTime;
+    private LocalDateTime cancelTime;
 
     // 订单支付时间
-    private Date payTime;
+    private LocalDateTime payTime;
 
     // 订单发货时间
-    private Date deliverTime;
+    private LocalDateTime deliverTime;
 
     // 订单收货时间
-    private Date receiveTime;
+    private LocalDateTime receiveTime;
 
     // 订单评价时间
-    private Date reviewTime;
+    private LocalDateTime reviewTime;
 
     // 订单完成时间
-    private Date finishTime;
+    private LocalDateTime finishTime;
 
     // 已是否删除
-    private Integer isDeleted;
+    private FieldStatus isDeleted;
 
-    public static OrderDto fromOrder(Order order) {
-        OrderDto target = new OrderDto();
+    public static OrderDTO fromPO(Order order) {
+        OrderDTO target = new OrderDTO();
         BeanUtils.copyProperties(order, target);
         return target;
     }
@@ -76,11 +63,11 @@ public class OrderDto {
         this.id = id;
     }
 
-    public Integer getStatus() {
+    public OrderStatus getStatus() {
         return status;
     }
 
-    public void setStatus(Integer status) {
+    public void setStatus(OrderStatus status) {
         this.status = status;
     }
 
@@ -100,14 +87,6 @@ public class OrderDto {
         this.review = review;
     }
 
-    public BigDecimal getTotalPrice() {
-        return totalPrice;
-    }
-
-    public void setTotalPrice(BigDecimal totalPrice) {
-        this.totalPrice = totalPrice;
-    }
-
     public List<OrderItem> getOrderItems() {
         return orderItems;
     }
@@ -124,67 +103,67 @@ public class OrderDto {
         this.userAddress = userAddress;
     }
 
-    public Date getCreateTime() {
+    public LocalDateTime getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(Date createTime) {
+    public void setCreateTime(LocalDateTime createTime) {
         this.createTime = createTime;
     }
 
-    public Date getCancelTime() {
+    public LocalDateTime getCancelTime() {
         return cancelTime;
     }
 
-    public void setCancelTime(Date cancelTime) {
+    public void setCancelTime(LocalDateTime cancelTime) {
         this.cancelTime = cancelTime;
     }
 
-    public Date getPayTime() {
+    public LocalDateTime getPayTime() {
         return payTime;
     }
 
-    public void setPayTime(Date payTime) {
+    public void setPayTime(LocalDateTime payTime) {
         this.payTime = payTime;
     }
 
-    public Date getDeliverTime() {
+    public LocalDateTime getDeliverTime() {
         return deliverTime;
     }
 
-    public void setDeliverTime(Date deliverTime) {
+    public void setDeliverTime(LocalDateTime deliverTime) {
         this.deliverTime = deliverTime;
     }
 
-    public Date getReceiveTime() {
+    public LocalDateTime getReceiveTime() {
         return receiveTime;
     }
 
-    public void setReceiveTime(Date receiveTime) {
+    public void setReceiveTime(LocalDateTime receiveTime) {
         this.receiveTime = receiveTime;
     }
 
-    public Date getReviewTime() {
+    public LocalDateTime getReviewTime() {
         return reviewTime;
     }
 
-    public void setReviewTime(Date reviewTime) {
+    public void setReviewTime(LocalDateTime reviewTime) {
         this.reviewTime = reviewTime;
     }
 
-    public Date getFinishTime() {
+    public LocalDateTime getFinishTime() {
         return finishTime;
     }
 
-    public void setFinishTime(Date finishTime) {
+    public void setFinishTime(LocalDateTime finishTime) {
         this.finishTime = finishTime;
     }
 
-    public Integer getIsDeleted() {
+    public FieldStatus getIsDeleted() {
         return isDeleted;
     }
 
-    public void setIsDeleted(Integer isDeleted) {
+    public void setIsDeleted(FieldStatus isDeleted) {
         this.isDeleted = isDeleted;
     }
 }

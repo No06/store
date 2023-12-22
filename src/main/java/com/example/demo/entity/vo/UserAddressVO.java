@@ -1,42 +1,24 @@
-package com.example.demo.entity;
+package com.example.demo.entity.vo;
 
 import com.example.demo.entity.dto.UserAddressDTO;
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.beans.BeanUtils;
 
-// 用户地址类
-@Entity
-@DynamicUpdate
-@Table(name = "user_address")
-public class UserAddress {
-    public static Integer MAX_COUNT = 10; // 用户收货地址存储上限
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class UserAddressVO {
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    private User user;
-
     // 收货人姓名
-    @NotNull
-    @Column(length = 50)
     private String name;
 
     // 收货人电话
-    @NotNull
-    @Column(length = 20)
     private String phone;
 
     // 收货人地址
-    @NotNull
-    @Column(length = 200)
     private String address;
 
-    public static UserAddress fromDTO(UserAddressDTO dto) {
-        UserAddress target = new UserAddress();
+    private Boolean isSelected = false;
+
+    public static UserAddressVO fromDTO(UserAddressDTO dto) {
+        UserAddressVO target = new UserAddressVO();
         BeanUtils.copyProperties(dto, target);
         return target;
     }
@@ -47,14 +29,6 @@ public class UserAddress {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 
     public String getName() {
@@ -79,5 +53,13 @@ public class UserAddress {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public Boolean getSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(Boolean selected) {
+        isSelected = selected;
     }
 }

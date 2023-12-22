@@ -8,6 +8,7 @@ import com.example.demo.exception.ProductNotFoundException;
 import com.example.demo.repository.CartRepository;
 import com.example.demo.repository.ProductRepository;
 import com.example.demo.service.CartService;
+import com.example.demo.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,10 +23,13 @@ public class CartServiceImpl implements CartService {
 
     private final ProductRepository productRepository;
 
+    private final OrderService orderService;
+
     @Autowired
-    public CartServiceImpl(CartRepository cartRepository, ProductRepository productRepository) {
+    public CartServiceImpl(CartRepository cartRepository, ProductRepository productRepository, OrderService orderService) {
         this.cartRepository = cartRepository;
         this.productRepository = productRepository;
+        this.orderService = orderService;
     }
 
     @Override

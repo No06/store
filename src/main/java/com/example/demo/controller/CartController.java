@@ -5,6 +5,7 @@ import com.example.demo.entity.vo.CartVO;
 import com.example.demo.exception.CartNotFoundException;
 import com.example.demo.exception.ProductNotFoundException;
 import com.example.demo.service.CartService;
+import com.example.demo.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,9 +19,12 @@ public class CartController {
 
     private final CartService cartService;
 
+    private final OrderService orderService;
+
     @Autowired
-    public CartController(CartService cartService) {
+    public CartController(CartService cartService, OrderService orderService) {
         this.cartService = cartService;
+        this.orderService = orderService;
     }
 
     @GetMapping("/quantityCount")

@@ -1,22 +1,16 @@
-package com.example.demo.entity;
+package com.example.demo.entity.dto;
 
-import com.example.demo.entity.dto.OrderItemDTO;
-import jakarta.persistence.*;
+import com.example.demo.entity.Order;
+import com.example.demo.entity.OrderItem;
+import com.example.demo.entity.Product;
+import org.springframework.beans.BeanUtils;
 
-// 订单商品项类
-@Entity
-@Table(name = "order_items")
-public class OrderItem {
-    // 商品ID
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class OrderItemDTO {
     private Long id;
 
     // 商品
-    @OneToOne
     private Product product;
 
-    @OneToOne
     private Order order;
 
     // 商品数量
@@ -30,11 +24,10 @@ public class OrderItem {
         this.id = id;
     }
 
-    public static OrderItem fromDTO(OrderItemDTO cartDTO) {
-        OrderItem orderItem = new OrderItem();
-        orderItem.setProduct(cartDTO.getProduct());
-        orderItem.setQuantity(cartDTO.getQuantity());
-        return orderItem;
+    public static OrderItemDTO fromPO(OrderItem orderItem) {
+        OrderItemDTO target = new OrderItemDTO();
+        BeanUtils.copyProperties(orderItem, target);
+        return target;
     }
 
     public Product getProduct() {

@@ -4,11 +4,13 @@ import com.example.demo.entity.dto.CartDTO;
 import jakarta.persistence.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.beans.BeanUtils;
 
 @Entity
 @Table(name = "cart")
 @DynamicInsert
+@DynamicUpdate
 public class Cart {
 
     @Id
