@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.example.demo.entity.User;
+import com.example.demo.entity.dto.UserAddressDTO;
 import com.example.demo.entity.dto.UserDTO;
 import com.example.demo.entity.vo.UserAddressVO;
 import com.example.demo.entity.vo.UserVO;
@@ -72,7 +73,11 @@ public class UserController {
 
     @GetMapping("/get/defaultAddress")
     public ResponseEntity<UserAddressVO> getDefaultAddress(@RequestAttribute Long userId) {
-        return ResponseEntity.ok(UserAddressVO.fromDTO(userService.findDefaultAddressById(userId)));
+        UserAddressDTO addressDTO = userService.findDefaultAddressById(userId);
+        if (addressDTO == null) {
+            return ResponseEntity.ok(null);
+        }
+        return ResponseEntity.ok(UserAddressVO.fromDTO(addressDTO));
     }
 
     @PutMapping("/update/defaultAddress")

@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class UserAddressServiceImpl implements UserAddressService {
@@ -34,15 +36,14 @@ public class UserAddressServiceImpl implements UserAddressService {
         // 新建的地址
         if (dto.getId() == null) {
             Long count = addressRepository.countAllByUserId(userId);
-            if (count >= UserAddress.MAX_COUNT) {
-                throw new UserAddressQuantityAlreadyFullException();
-            }
             // 判断如果是新建的第一个地址 则设为默认使用
             if (count == null || count == 0) {
                 user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("ID: "+userId));
                 userAddress = UserAddress.fromDTO(dto);
                 user.setDefaultAddress(userAddress);
                 userRepository.save(user);
+            } else if (count >= UserAddress.MAX_COUNT) {
+                throw new UserAddressQuantityAlreadyFullException();
             }
         }
         dto.setUser(user);
@@ -56,6 +57,13 @@ public class UserAddressServiceImpl implements UserAddressService {
 
     @Override
     public void removeByIdAndUserId(Long id, Long userId) {
+        Optional<User> user = userRepository.findById(userId);
+        // 如果user可以找到并且设置的默认地址等于这个地址 则先设为null再继续
+        if (user.isPresent() && Objects.equals(user.get().getDefaultAddress().getId(), id)) {
+            User u = user.get();
+            u.setDefaultAddress(null);
+            userRepository.save(u);
+        }
         addressRepository.removeByIdAndUserId(id, userId);
     }
 

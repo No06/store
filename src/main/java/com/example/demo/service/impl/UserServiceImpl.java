@@ -53,7 +53,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserAddressDTO findDefaultAddressById(Long id) {
-        return UserAddressDTO.fromPO(userRepository.findDefaultAddressById(id));
+        UserAddress address = userRepository.findDefaultAddressById(id);
+        if (address == null) {
+            return null;
+        }
+        return UserAddressDTO.fromPO(address);
     }
 
     @Override
