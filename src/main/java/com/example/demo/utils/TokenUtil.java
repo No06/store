@@ -20,7 +20,7 @@ public class TokenUtil {
         JWTCreator.Builder builder = JWT.create();
         builder.withClaim("id", user.getId());
         builder.withClaim("username", user.getUsername());
-        builder.withClaim("isAdmin", user.getAdmin());
+        builder.withClaim("isAdmin", user.getIsAdmin());
         builder.withIssuedAt(new Date(System.currentTimeMillis()));
         builder.withExpiresAt(new Date(System.currentTimeMillis() + EXPIRE_TIME));
         return builder.sign(Algorithm.HMAC256(SECRET_KEY));

@@ -2,10 +2,11 @@ package com.example.demo.entity;
 
 import com.example.demo.entity.dto.UserDTO;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.beans.BeanUtils;
+
+import java.util.List;
 
 @Entity
 @DynamicUpdate
@@ -28,14 +29,16 @@ public class User {
     @Column(length = 30, nullable = false)
     private String password;
 
-    @NotNull
     @ColumnDefault("0")
     private Boolean isAdmin;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private UserAddress defaultAddress;
 
-    public static User fromUserDTO(UserDTO userDTO) {
+    @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY, mappedBy = "user")
+    private List<Cart> carts;
+
+    public static User fromDTO(UserDTO userDTO) {
         User user = new User();
         BeanUtils.copyProperties(userDTO, user);
         return user;
@@ -65,11 +68,11 @@ public class User {
         this.password = password;
     }
 
-    public Boolean getAdmin() {
+    public Boolean getIsAdmin() {
         return isAdmin;
     }
 
-    public void setAdmin(Boolean admin) {
+    public void setIsAdmin(Boolean admin) {
         isAdmin = admin;
     }
 
@@ -79,5 +82,13 @@ public class User {
 
     public void setDefaultAddress(UserAddress defaultAddress) {
         this.defaultAddress = defaultAddress;
+    }
+
+    public List<Cart> getCarts() {
+        return carts;
+    }
+
+    public void setCarts(List<Cart> carts) {
+        this.carts = carts;
     }
 }

@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -29,6 +30,10 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
     @Query("select p from Product p join p.images i where i.rank = (select min(i2.rank) from ProductImage i2 where i2.product.id = p.id)")
     List<Product> findAllWithMinRankImage();
 
+    // FIXME: 不使用Object[]
     @Query("SELECT p.category, COUNT(p) FROM Product p GROUP BY p.category")
-    List<Object[]> countByCategory();
+    List<Object[]> countAllByCategory();
+
+    @Query("SELECT COUNT(p) FROM Product p WHERE p.category.id = :categoryId")
+    Long countByCategoryId(@Param("categoryId") Long categoryId);
 }

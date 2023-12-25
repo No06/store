@@ -1,10 +1,11 @@
 package com.example.demo.entity;
 
+import com.example.demo.entity.dto.ProductCategoryDTO;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.beans.BeanUtils;
 
 import java.util.List;
 
@@ -23,15 +24,20 @@ public class ProductCategory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 20)
     private String name;
 
-    @Column(nullable = false)
-    @ColumnDefault("''")
+    @Column(columnDefinition = "varchar(50) default ''", nullable = false, insertable = false)
     private String description;
 
     @OneToMany(mappedBy = "category")
     private List<Product> products;
+
+    public static ProductCategory fromDTO(ProductCategoryDTO dto) {
+        ProductCategory target = new ProductCategory();
+        BeanUtils.copyProperties(dto, target);
+        return target;
+    }
 
     public Long getId() {
         return id;

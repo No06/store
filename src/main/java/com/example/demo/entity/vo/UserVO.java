@@ -4,6 +4,8 @@ import com.example.demo.entity.dto.UserDTO;
 import org.springframework.beans.BeanUtils;
 
 public class UserVO {
+//    private Long id;
+
     private String username;
 
     private Boolean isAdmin;
@@ -13,6 +15,14 @@ public class UserVO {
         BeanUtils.copyProperties(userDTO, userVO);
         return userVO;
     }
+
+//    public Long getId() {
+//        return id;
+//    }
+//
+//    public void setId(Long id) {
+//        this.id = id;
+//    }
 
     public String getUsername() {
         return username;

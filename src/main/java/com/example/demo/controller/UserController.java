@@ -1,7 +1,6 @@
 package com.example.demo.controller;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.example.demo.entity.User;
 import com.example.demo.entity.dto.UserAddressDTO;
 import com.example.demo.entity.dto.UserDTO;
 import com.example.demo.entity.vo.UserAddressVO;
@@ -10,11 +9,13 @@ import com.example.demo.exception.*;
 import com.example.demo.service.UserService;
 import com.example.demo.utils.TokenUtil;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/user")
@@ -46,18 +47,12 @@ public class UserController {
         }
     }
 
-    @GetMapping("/info/{id}")
-    public ResponseEntity<?> info(@PathVariable Long id, @RequestHeader String token) {
+    @GetMapping("/info")
+    public ResponseEntity<UserVO> info(@RequestAttribute Long userId) {
         try {
-            TokenUtil.verify(token);
-            User user = userService.findById(id);
-            UserVO vo = new UserVO();
-            BeanUtils.copyProperties(user, vo);
-            return ResponseEntity.ok(vo);
-        } catch (JWTVerificationException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+            return ResponseEntity.ok(UserVO.fromUserDTO(userService.findById(userId)));
         } catch (UserNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            throw new RuntimeException(e);
         }
     }
 
@@ -88,5 +83,43 @@ public class UserController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/get/all")
+    public ResponseEntity<List<UserDTO>> getAll(@RequestAttribute Boolean isAdmin) {
+        if (isAdmin) {
+            return ResponseEntity.ok(userService.findAll());
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
+    @DeleteMapping("/remove/byId/{id}")
+    public ResponseEntity<Void> removeById(@PathVariable Long id, @RequestAttribute Boolean isAdmin) {
+        if (isAdmin) {
+            userService.removeById(id);
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
+    @PutMapping("/save")
+    public ResponseEntity<Void> save(@RequestBody UserDTO userDTO, @RequestAttribute Boolean isAdmin) {
+        if (isAdmin) {
+            userService.save(userDTO);
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
+    @GetMapping("/get/page")
+    public ResponseEntity<Page<UserDTO>> getPage(
+            @RequestParam Integer page,
+            @RequestParam Integer size,
+            @RequestAttribute Boolean isAdmin
+    ) {
+        if (isAdmin) {
+            return ResponseEntity.ok(userService.findPage(page, size));
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 }

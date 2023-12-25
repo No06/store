@@ -12,7 +12,7 @@ public class UserDTO {
 
     private Boolean isAdmin;
 
-    public static UserDTO fromUser(User user) {
+    public static UserDTO fromPO(User user) {
         UserDTO target = new UserDTO();
         BeanUtils.copyProperties(user, target);
         return target;
@@ -42,11 +42,11 @@ public class UserDTO {
         this.password = password;
     }
 
-    public Boolean getAdmin() {
+    public Boolean getIsAdmin() {
         return isAdmin;
     }
 
-    public void setAdmin(Boolean admin) {
+    public void setIsAdmin(Boolean admin) {
         isAdmin = admin;
     }
 }

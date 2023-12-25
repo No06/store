@@ -1,10 +1,8 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.dto.ProductDTO;
-import com.example.demo.entity.vo.ProductCategoryVO;
 import com.example.demo.entity.vo.ProductSimpleVO;
 import com.example.demo.entity.vo.ProductVO;
-import com.example.demo.service.ProductCategoryService;
 import com.example.demo.service.ProductService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +17,10 @@ import java.util.List;
 @RequestMapping("/product")
 public class ProductController {
     private final ProductService productService;
-    private final ProductCategoryService categoryService;
+
     @Autowired
-    public ProductController(ProductService productService, ProductCategoryService categoryService) {
+    public ProductController(ProductService productService) {
         this.productService = productService;
-        this.categoryService = categoryService;
     }
 
     // 获取所有商品
@@ -36,12 +33,6 @@ public class ProductController {
     @GetMapping("/getAllItems")
     public List<ProductSimpleVO> getAllItems() {
         return productService.findAll().stream().map(ProductSimpleVO::fromProductDTO).toList();
-    }
-
-    // 获取所有商品类型
-    @GetMapping("/getAllCategory")
-    public List<ProductCategoryVO> getAllCategory() {
-        return categoryService.findAll().stream().map(ProductCategoryVO::fromDTO).toList();
     }
 
     // 根据ID获取商品
@@ -130,6 +121,7 @@ public class ProductController {
     }
 
     // 获取商品类中商品总数
+    // FIXME: 替换 Object[]
     @GetMapping("/getCountByCategory")
     public List<Object[]> getCountByCategory() {
         return productService.countByCategory();
@@ -155,5 +147,10 @@ public class ProductController {
             throw new EntityNotFoundException("Entity with ID: [" + id + "] was not found");
         }
         return ResponseEntity.ok("Delete success");
+    }
+
+    @GetMapping("/get/count/byCategoryId/{id}")
+    public ResponseEntity<Long> getCountByCategoryId(@PathVariable(name = "id") Long categoryId) {
+        return ResponseEntity.ok(productService.countByCategoryId(categoryId));
     }
 }

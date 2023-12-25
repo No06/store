@@ -18,4 +18,5 @@ public interface ProductService {
     void deleteById(Long id);
     List<Object[]> countByCategory();
     Long count();
+    Long countByCategoryId(Long categoryId);
 }

@@ -156,11 +156,16 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<Object[]> countByCategory() {
-        return repository.countByCategory();
+        return repository.countAllByCategory();
     }
 
     @Override
     public Long count() {
         return repository.count();
+    }
+
+    @Override
+    public Long countByCategoryId(Long categoryId) {
+        return repository.countByCategoryId(categoryId);
     }
 }

@@ -12,8 +12,12 @@ import com.example.demo.repository.UserAddressRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -33,7 +37,7 @@ public class UserServiceImpl implements UserService {
         if (userRepository.findByUsername(userDTO.getUsername()) != null) {
             throw new UserAlreadyExistsException();
         }
-        User user = User.fromUserDTO(userDTO);
+        User user = User.fromDTO(userDTO);
         userRepository.save(user);
     }
 
@@ -43,12 +47,12 @@ public class UserServiceImpl implements UserService {
         if (user == null) {
             throw new UserIncorrectUsernameOrPasswordException();
         }
-        return UserDTO.fromUser(user);
+        return UserDTO.fromPO(user);
     }
 
     @Override
-    public User findById(Long id) throws UserNotFoundException {
-        return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("ID: "+id));
+    public UserDTO findById(Long id) throws UserNotFoundException {
+        return UserDTO.fromPO(userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("ID: "+id)));
     }
 
     @Override
@@ -67,5 +71,26 @@ public class UserServiceImpl implements UserService {
             throw new IllegalAccessException("与收货地址所归属的用户不匹配");
         }
         userRepository.updateDefaultAddressById(addressId, userId);
+    }
+
+    @Override
+    public List<UserDTO> findAll() {
+        return userRepository.findAll().stream().map(UserDTO::fromPO).toList();
+    }
+
+    @Override
+    public void save(UserDTO userDTO) {
+        userRepository.save(User.fromDTO(userDTO));
+    }
+
+    @Override
+    public void removeById(Long id) {
+        userRepository.removeById(id);
+    }
+
+    @Override
+    public Page<UserDTO> findPage(Integer page, Integer size) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        return userRepository.findAll(pageable).map(UserDTO::fromPO);
     }
 }
