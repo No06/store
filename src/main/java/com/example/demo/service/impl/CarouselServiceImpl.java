@@ -1,6 +1,6 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.entity.dto.CarouselDTO;
+import com.example.demo.entity.Carousel;
 import com.example.demo.repository.CarouselRepository;
 import com.example.demo.service.CarouselService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,7 @@ public class CarouselServiceImpl implements CarouselService {
     }
 
     @Override
-    public List<CarouselDTO> findAll() {
-        return repository.findAll().stream().map(CarouselDTO::fromCarousel).toList();
+    public List<Carousel> findAll() {
+        return repository.findAll();
     }
 }

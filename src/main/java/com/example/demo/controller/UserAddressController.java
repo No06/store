@@ -1,7 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.entity.dto.UserAddressDTO;
-import com.example.demo.entity.vo.UserAddressVO;
+import com.example.demo.entity.UserAddress;
 import com.example.demo.exception.UserAddressNotFoundException;
 import com.example.demo.exception.UserAddressQuantityAlreadyFullException;
 import com.example.demo.exception.UserNotFoundException;
@@ -24,7 +23,7 @@ public class UserAddressController {
     }
 
     @PutMapping("/save")
-    public ResponseEntity<String> save(@RequestBody UserAddressDTO dto, @RequestAttribute Long userId) {
+    public ResponseEntity<String> save(@RequestBody UserAddress dto, @RequestAttribute Long userId) {
         try {
             userAddressService.save(dto, userId);
         } catch (UserNotFoundException | UserAddressQuantityAlreadyFullException e) {
@@ -34,7 +33,7 @@ public class UserAddressController {
     }
 
     @PutMapping("/saveAll")
-    public ResponseEntity<Void> saveAll(@RequestBody List<UserAddressDTO> dtoList) {
+    public ResponseEntity<Void> saveAll(@RequestBody List<UserAddress> dtoList) {
         userAddressService.saveAll(dtoList);
         return ResponseEntity.ok().build();
     }
@@ -49,15 +48,15 @@ public class UserAddressController {
     }
 
     @GetMapping("/get/byUser")
-    public ResponseEntity<List<UserAddressVO>> getAllByUserId(@RequestAttribute Long userId) {
-        List<UserAddressVO> vos = userAddressService.findAllByUserId(userId).stream().map(UserAddressVO::fromDTO).toList();
+    public ResponseEntity<List<UserAddress>> getAllByUserId(@RequestAttribute Long userId) {
+        List<UserAddress> vos = userAddressService.findAllByUserId(userId);
         return ResponseEntity.ok(vos);
     }
 
     @GetMapping("/get/byId/{id}")
     public ResponseEntity<?> getById(@PathVariable Long id) {
         try {
-            return ResponseEntity.ok(UserAddressVO.fromDTO(userAddressService.findById(id)));
+            return ResponseEntity.ok(userAddressService.findById(id));
         } catch (UserAddressNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }

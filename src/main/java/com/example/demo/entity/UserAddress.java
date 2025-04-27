@@ -1,6 +1,5 @@
 package com.example.demo.entity;
 
-import com.example.demo.entity.dto.UserAddressDTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.DynamicUpdate;
@@ -35,12 +34,6 @@ public class UserAddress {
     @NotNull
     @Column(length = 200)
     private String address;
-
-    public static UserAddress fromDTO(UserAddressDTO dto) {
-        UserAddress target = new UserAddress();
-        BeanUtils.copyProperties(dto, target);
-        return target;
-    }
 
     public Long getId() {
         return id;

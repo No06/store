@@ -1,7 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.entity.dto.OrderDTO;
-import com.example.demo.entity.vo.OrderVO;
+import com.example.demo.entity.Order;
 import com.example.demo.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,17 +19,17 @@ public class OrderController {
     }
 
     @GetMapping("/getByUserId")
-    public ResponseEntity<List<OrderVO>> getAllByUserId(@RequestAttribute Long userId) {
-        return ResponseEntity.ok(service.findAllByUserId(userId).stream().map(OrderVO::fromDTO).toList());
+    public ResponseEntity<List<Order>> getAllByUserId(@RequestAttribute Long userId) {
+        return ResponseEntity.ok(service.findAllByUserId(userId));
     }
 
     @GetMapping("/getAll")
-    public ResponseEntity<List<OrderVO>> getAll() {
-        return ResponseEntity.ok(service.findAll().stream().map(OrderVO::fromDTO).toList());
+    public ResponseEntity<List<Order>> getAll() {
+        return ResponseEntity.ok(service.findAll());
     }
 
     @PutMapping("/save")
-    public ResponseEntity<Object> save(@RequestBody OrderDTO order, @RequestAttribute Long userId) {
+    public ResponseEntity<Object> save(@RequestBody Order order, @RequestAttribute Long userId) {
         service.create(order, userId);
         return ResponseEntity.ok().build();
     }

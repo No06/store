@@ -3,7 +3,6 @@ package com.example.demo.service.impl;
 import com.example.demo.entity.Order;
 import com.example.demo.entity.ProductReview;
 import com.example.demo.entity.User;
-import com.example.demo.entity.dto.OrderDTO;
 import com.example.demo.entity.enums.FieldStatus;
 import com.example.demo.entity.enums.OrderStatus;
 import com.example.demo.exception.IllegalOrderStatusException;
@@ -26,31 +25,31 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void create(OrderDTO order, Long userId) {
+    public void create(Order order, Long userId) {
         User user = new User();
         user.setId(userId);
         order.setCreateTime(LocalDateTime.now());
         order.setUser(user);
-        repository.save(Order.fromDTO(order));
+        repository.save(order);
     }
 
     @Override
-    public List<OrderDTO> findAll() {
-        return repository.findAll().stream().map(OrderDTO::fromPO).toList();
+    public List<Order> findAll() {
+        return repository.findAll();
     }
 
     @Override
-    public OrderDTO findById(Long id) throws OrderNotFoundException {
+    public Order findById(Long id) throws OrderNotFoundException {
         Order order = repository.findByIdAndFieldStatus(id, FieldStatus.AVAILABLE);
         if (order == null) {
             throw new OrderNotFoundException("ID: " + id);
         }
-        return OrderDTO.fromPO(order);
+        return order;
     }
 
     @Override
-    public List<OrderDTO> findAllByUserId(Long userId) {
-        return repository.findAllByUserIdAndFieldStatus(userId, FieldStatus.AVAILABLE).stream().map(OrderDTO::fromPO).toList();
+    public List<Order> findAllByUserId(Long userId) {
+        return repository.findAllByUserIdAndFieldStatus(userId, FieldStatus.AVAILABLE);
     }
 
     @Override

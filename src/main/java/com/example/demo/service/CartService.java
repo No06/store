@@ -1,6 +1,6 @@
 package com.example.demo.service;
 
-import com.example.demo.entity.dto.CartDTO;
+import com.example.demo.entity.Cart;
 import com.example.demo.exception.CartNotFoundException;
 import com.example.demo.exception.ProductNotFoundException;
 
@@ -13,9 +13,9 @@ public interface CartService {
 
     void addProductToCart(Long userId, Long productId, Integer quantity) throws ProductNotFoundException;
 
-    List<CartDTO> getCartByUserId(Long userId);
+    List<Cart> getCartByUserId(Long userId);
 
-    void updateCart(Long userId, CartDTO cartDTO) throws CartNotFoundException;
+    void updateCart(Long userId, Cart cartDTO) throws CartNotFoundException;
 
     void deleteCartProduct(Long userId, Long productId);
 

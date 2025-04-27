@@ -1,6 +1,5 @@
 package com.example.demo.entity;
 
-import com.example.demo.entity.dto.OrderItemDTO;
 import jakarta.persistence.*;
 
 // 订单商品项类
@@ -28,13 +27,6 @@ public class OrderItem {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public static OrderItem fromDTO(OrderItemDTO cartDTO) {
-        OrderItem orderItem = new OrderItem();
-        orderItem.setProduct(cartDTO.getProduct());
-        orderItem.setQuantity(cartDTO.getQuantity());
-        return orderItem;
     }
 
     public Product getProduct() {

@@ -1,11 +1,9 @@
 package com.example.demo.entity;
 
-import com.example.demo.entity.dto.CartDTO;
 import jakarta.persistence.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
-import org.springframework.beans.BeanUtils;
 
 @Entity
 @Table(name = "cart")
@@ -27,12 +25,6 @@ public class Cart {
     // 被选择状态
     @ColumnDefault("1")
     private Boolean isSelected;
-
-    public static Cart fromDTO(CartDTO dto) {
-        Cart target = new Cart();
-        BeanUtils.copyProperties(dto, target);
-        return target;
-    }
 
     public Long getId() {
         return id;

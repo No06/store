@@ -2,7 +2,6 @@ package com.example.demo.service.impl;
 
 import com.example.demo.entity.Product;
 import com.example.demo.entity.ProductImage;
-import com.example.demo.entity.dto.ProductDTO;
 import com.example.demo.repository.ProductRepository;
 import com.example.demo.service.ProductService;
 import jakarta.persistence.EntityNotFoundException;
@@ -28,37 +27,37 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductDTO findById(Long id) throws EntityNotFoundException {
-        return ProductDTO.fromProduct(repository.findById(id).orElseThrow(() -> new EntityNotFoundException("商品ID:"+ id +"不存在")));
+    public Product findById(Long id) throws EntityNotFoundException {
+        return repository.findById(id).orElseThrow(() -> new EntityNotFoundException("商品ID:"+ id +"不存在"));
     }
 
     @Override
-    public List<ProductDTO> findAll() {
-        return repository.findAll().stream().map(ProductDTO::fromProduct).toList();
+    public List<Product> findAll() {
+        return repository.findAll();
     }
 
     @Override
-    public List<ProductDTO> findByName(String name) {
-        return repository.findByName(name).stream().map(ProductDTO::fromProduct).toList();
+    public List<Product> findByName(String name) {
+        return repository.findByName(name);
     }
 
     @Override
-    public List<ProductDTO> findByCategoryName(String categoryName) {
-        return repository.findByCategoryName(categoryName).stream().map(ProductDTO::fromProduct).toList();
+    public List<Product> findByCategoryName(String categoryName) {
+        return repository.findByCategoryName(categoryName);
     }
 
     @Override
-    public List<ProductDTO> findByNameAndCategoryName(String productName, String categoryName) {
-        return repository.findByNameAndCategoryName(productName, categoryName).stream().map(ProductDTO::fromProduct).toList();
+    public List<Product> findByNameAndCategoryName(String productName, String categoryName) {
+        return repository.findByNameAndCategoryName(productName, categoryName);
     }
 
     @Override
-    public List<ProductDTO> findByPriceRange(Double min, Double max) {
-        return repository.findByPriceRange(min, max).stream().map(ProductDTO::fromProduct).toList();
+    public List<Product> findByPriceRange(Double min, Double max) {
+        return repository.findByPriceRange(min, max);
     }
 
     @Override
-    public Page<ProductDTO> findByNameAndCategoryIdForPage(String name, Long category_id, Integer page, Integer size) {
+    public Page<Product> findByNameAndCategoryIdForPage(String name, Long category_id, Integer page, Integer size) {
         Pageable pageable = PageRequest.of(page - 1, size);
         Specification<Product> specification = (root, query, criteriaBuilder) ->  {
             // 创建一个集合，用于存放查询条件
@@ -73,11 +72,11 @@ public class ProductServiceImpl implements ProductService {
             }
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
-        return repository.findAll(specification, pageable).map(ProductDTO::fromProduct);
+        return repository.findAll(specification, pageable);
     }
 
     @Override
-    public List<ProductDTO> findAllItemBySpec(String name, boolean inStock, Double minPrice, Double maxPrice, Long[] category_id) {
+    public List<Product> findAllItemBySpec(String name, boolean inStock, Double minPrice, Double maxPrice, Long[] category_id) {
         Specification<Product> spec = (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
             // 关键词查找
@@ -106,20 +105,19 @@ public class ProductServiceImpl implements ProductService {
 
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
-        return repository.findAll(spec).stream().map(ProductDTO::fromProduct).toList();
+        return repository.findAll(spec);
     }
 
     @Override
-    public void save(ProductDTO product) {
-        Product newProduct = Product.fromProductDTO(product);
+    public void save(Product product) {
         Product oldProduct;
         try {
             oldProduct = repository.findById(product.getId()).orElseThrow(
                     () -> new EntityNotFoundException(String.valueOf(product.getId()))
             );
         } catch (Exception e) {
-            product.getImages().forEach((image) -> image.setProduct(newProduct));
-            repository.save(newProduct);
+            product.getImages().forEach((image) -> image.setProduct(product));
+            repository.save(product);
             return;
         }
         if (product.getName() != null) {

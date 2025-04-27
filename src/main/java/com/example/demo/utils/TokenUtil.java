@@ -4,7 +4,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTCreator;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.example.demo.entity.dto.UserDTO;
+import com.example.demo.entity.User;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.Date;
@@ -16,7 +16,7 @@ public class TokenUtil {
     private static final String SECRET_KEY = "4ac59271c598d70afaf591f3f55dd22615d41c35a60d9e5d769690f3d569085d";
 
     // generate a token for a given user
-    public static String generateToken(UserDTO user) {
+    public static String generateToken(User user) {
         JWTCreator.Builder builder = JWT.create();
         builder.withClaim("id", user.getId());
         builder.withClaim("username", user.getUsername());

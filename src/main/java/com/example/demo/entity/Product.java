@@ -1,6 +1,5 @@
 package com.example.demo.entity;
 
-import com.example.demo.entity.dto.ProductDTO;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
@@ -51,12 +50,6 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("rank asc")
     private List<ProductImage> images;
-
-    public static Product fromProductDTO(ProductDTO productDTO) {
-        Product product = new Product();
-        BeanUtils.copyProperties(productDTO, product);
-        return product;
-    }
 
     public Long getId() {
         return id;

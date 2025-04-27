@@ -1,7 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.entity.dto.CartDTO;
-import com.example.demo.entity.vo.CartVO;
+import com.example.demo.entity.Cart;
 import com.example.demo.exception.CartNotFoundException;
 import com.example.demo.exception.ProductNotFoundException;
 import com.example.demo.service.CartService;
@@ -19,12 +18,9 @@ public class CartController {
 
     private final CartService cartService;
 
-    private final OrderService orderService;
-
     @Autowired
-    public CartController(CartService cartService, OrderService orderService) {
+    public CartController(CartService cartService) {
         this.cartService = cartService;
-        this.orderService = orderService;
     }
 
     @GetMapping("/quantityCount")
@@ -52,18 +48,18 @@ public class CartController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<List<CartVO>> getCartByUserId(@RequestAttribute Long userId) {
-        List<CartVO> data = cartService.getCartByUserId(userId).stream().map(CartVO::fromCartDTO).toList();
+    public ResponseEntity<List<Cart>> getCartByUserId(@RequestAttribute Long userId) {
+        List<Cart> data = cartService.getCartByUserId(userId);
         return ResponseEntity.ok(data);
     }
 
     @PatchMapping("/update")
     public ResponseEntity<?> updateCartQuantity(
-            @RequestBody CartDTO cartDTO,
+            @RequestBody Cart cart,
             @RequestAttribute Long userId
     ) {
         try {
-            cartService.updateCart(userId, cartDTO);
+            cartService.updateCart(userId, cart);
         } catch (CartNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }

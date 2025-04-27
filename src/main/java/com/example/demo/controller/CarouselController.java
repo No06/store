@@ -1,6 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.entity.vo.CarouselVO;
+import com.example.demo.entity.Carousel;
 import com.example.demo.service.CarouselService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +21,7 @@ public class CarouselController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<List<CarouselVO>> findAll() {
-        return ResponseEntity.ok(carouselService.findAll().stream().map(CarouselVO::fromCarouselDTO).toList());
+    public ResponseEntity<List<Carousel>> findAll() {
+        return ResponseEntity.ok(carouselService.findAll());
     }
 }

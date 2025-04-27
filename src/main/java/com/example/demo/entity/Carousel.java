@@ -1,15 +1,12 @@
 package com.example.demo.entity;
 
-import com.example.demo.entity.dto.CarouselDTO;
 import jakarta.persistence.*;
 import org.hibernate.annotations.DynamicUpdate;
-import org.springframework.beans.BeanUtils;
 
 @Entity
 @Table(name = "carousel")
 @DynamicUpdate
 public class Carousel {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -22,12 +19,6 @@ public class Carousel {
     private String description;
 
     private String subDescription;
-
-    public static Carousel fromCarouselDTO(CarouselDTO carouselDTO) {
-        Carousel target = new Carousel();
-        BeanUtils.copyProperties(carouselDTO, target);
-        return target;
-    }
 
     public Long getId() {
         return id;

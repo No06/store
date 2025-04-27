@@ -3,12 +3,10 @@ package com.example.demo.service.impl;
 import com.example.demo.entity.Cart;
 import com.example.demo.entity.Product;
 import com.example.demo.entity.User;
-import com.example.demo.entity.dto.CartDTO;
 import com.example.demo.exception.ProductNotFoundException;
 import com.example.demo.repository.CartRepository;
 import com.example.demo.repository.ProductRepository;
 import com.example.demo.service.CartService;
-import com.example.demo.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,13 +21,10 @@ public class CartServiceImpl implements CartService {
 
     private final ProductRepository productRepository;
 
-    private final OrderService orderService;
-
     @Autowired
-    public CartServiceImpl(CartRepository cartRepository, ProductRepository productRepository, OrderService orderService) {
+    public CartServiceImpl(CartRepository cartRepository, ProductRepository productRepository) {
         this.cartRepository = cartRepository;
         this.productRepository = productRepository;
-        this.orderService = orderService;
     }
 
     @Override
@@ -65,21 +60,20 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public List<CartDTO> getCartByUserId(Long userId) {
+    public List<Cart> getCartByUserId(Long userId) {
         if (userId == null) {
             throw new IllegalArgumentException("参数不合法");
         }
-        return cartRepository.findByUserId(userId).stream().map(CartDTO::fromCart).toList();
+        return cartRepository.findByUserId(userId);
     }
 
     @Override
-    public void updateCart(Long userId, CartDTO cartDTO) {
-        Integer quantity = cartDTO.getQuantity();
-        Long productId = cartDTO.getProduct().getId();
+    public void updateCart(Long userId, Cart cart) {
+        Integer quantity = cart.getQuantity();
+        Long productId = cart.getProduct().getId();
         if (userId == null || productId == null || quantity == null || quantity < 1) {
             throw new IllegalArgumentException("参数不合法");
         }
-        Cart cart = Cart.fromDTO(cartDTO);
         User user = new User();
         user.setId(userId);
         cart.setUser(user);

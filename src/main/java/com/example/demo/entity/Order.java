@@ -1,7 +1,5 @@
 package com.example.demo.entity;
 
-import com.example.demo.entity.dto.CartDTO;
-import com.example.demo.entity.dto.OrderDTO;
 import com.example.demo.entity.enums.FieldStatus;
 import com.example.demo.entity.enums.OrderStatus;
 import jakarta.persistence.*;
@@ -9,7 +7,6 @@ import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SQLDelete;
-import org.springframework.beans.BeanUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -80,18 +77,6 @@ public class Order {
     @NotNull
     @ColumnDefault("0")
     private FieldStatus fieldStatus;
-
-    public static Order fromDTO(OrderDTO dto) {
-        Order target = new Order();
-        BeanUtils.copyProperties(dto, target);
-        return target;
-    }
-
-    public static Order fromCartDTO(CartDTO dto) {
-        Order order = new Order();
-        order.setUser(dto.getUser());
-        return order;
-    }
 
     public Long getId() {
         return id;
