@@ -2,9 +2,8 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.Cart;
 import com.example.demo.exception.CartNotFoundException;
-import com.example.demo.exception.ProductNotFoundException;
+import com.example.demo.exception.GoodsNotFoundException;
 import com.example.demo.service.CartService;
-import com.example.demo.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,14 +33,14 @@ public class CartController {
     }
 
     @PutMapping("/add")
-    public ResponseEntity<?> addProductToCart(
-            @RequestParam Long productId,
+    public ResponseEntity<?> addGoodsToCart(
+            @RequestParam Long goodsId,
             @RequestParam Integer quantity,
             @RequestAttribute Long userId
     ) {
         try {
-            cartService.addProductToCart(userId, productId, quantity);
-        } catch (ProductNotFoundException e) {
+            cartService.addGoodsToCart(userId, goodsId, quantity);
+        } catch (GoodsNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
         return ResponseEntity.ok().build();
@@ -67,11 +66,11 @@ public class CartController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<Void> deleteCartProduct(
-            @RequestParam Long productId,
+    public ResponseEntity<Void> deleteCartGoods(
+            @RequestParam Long goodsId,
             @RequestAttribute Long userId
     ) {
-        cartService.deleteCartProduct(userId, productId);
+        cartService.deleteCartGoods(userId, goodsId);
         return ResponseEntity.ok().build();
     }
 

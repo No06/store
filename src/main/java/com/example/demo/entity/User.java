@@ -1,19 +1,29 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
+import lombok.Data;
+
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+
+import com.example.demo.entity.dto.user.UserRegisterDTO;
 
 @Entity
 @DynamicUpdate
+@DynamicInsert
 @Table(name = "user")
+@Data
 public class User {
-
     public User() {}
 
     public User(Long id) {
         this.id = id;
+    }
+
+    public User(UserRegisterDTO dto) {
+        this.username = dto.getUsername();
+        this.password = dto.getPassword();
     }
 
     @Id
@@ -26,50 +36,10 @@ public class User {
     @Column(length = 30, nullable = false)
     private String password;
 
-    @NotNull
+    @Column(nullable = false)
     @ColumnDefault("0")
     private Boolean isAdmin;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private UserAddress defaultAddress;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public Boolean getAdmin() {
-        return isAdmin;
-    }
-
-    public void setAdmin(Boolean admin) {
-        isAdmin = admin;
-    }
-
-    public UserAddress getDefaultAddress() {
-        return defaultAddress;
-    }
-
-    public void setDefaultAddress(UserAddress defaultAddress) {
-        this.defaultAddress = defaultAddress;
-    }
 }

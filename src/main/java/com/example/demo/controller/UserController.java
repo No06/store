@@ -3,10 +3,17 @@ package com.example.demo.controller;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.example.demo.entity.User;
 import com.example.demo.entity.UserAddress;
+import com.example.demo.entity.dto.user.UserInfoDTO;
+import com.example.demo.entity.dto.user.UserLoginDTO;
+import com.example.demo.entity.dto.user.UserRegisterDTO;
+import com.example.demo.entity.response.LoginResponse;
 import com.example.demo.exception.*;
 import com.example.demo.service.UserService;
 import com.example.demo.utils.TokenUtil;
 import jakarta.servlet.http.HttpServletRequest;
+
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,50 +23,46 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/user")
 public class UserController {
     private final UserService userService;
+    
     @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody User user) {
-        try {
-            userService.register(user);
-            return ResponseEntity.ok().build();
-        } catch (UserAlreadyExistsException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+    public ResponseEntity<String> register(@RequestBody UserRegisterDTO dto) {
+        String msg = userService.register(dto);
+        if (msg != null) {
+            return ResponseEntity.badRequest().body(msg);
         }
+        return ResponseEntity.ok(null);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody User user) {
-        try {
-            User foundUser = userService.login(user.getUsername(), user.getPassword());
-            String token = TokenUtil.generateToken(foundUser);
-            return ResponseEntity.ok(token);
-        } catch (UserIncorrectUsernameOrPasswordException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+    public ResponseEntity<String> login(@RequestBody UserLoginDTO dto) {
+        LoginResponse resp = userService.login(dto);
+        if (!resp.success) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resp.msg);
         }
+        return ResponseEntity.ok(resp.data);
     }
 
-    @GetMapping("/info/{id}")
-    public ResponseEntity<?> info(@PathVariable Long id, @RequestHeader String token) {
-        try {
-            TokenUtil.verify(token);
-            User user = userService.findById(id);
-            return ResponseEntity.ok(user);
-        } catch (JWTVerificationException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
-        } catch (UserNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    @GetMapping("/info")
+    public ResponseEntity<UserInfoDTO> info(@RequestAttribute Long userId) {
+        Optional<User> user = userService.findById(userId);
+        if (user.isPresent()) {
+            return ResponseEntity.ok(new UserInfoDTO(user.get()));
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
 
     @GetMapping("/checkToken")
-    public ResponseEntity<?> checkToken(HttpServletRequest request) {
+    public ResponseEntity<String> checkToken(HttpServletRequest request) {
+        String token = TokenUtil.getTokenFromRequest(request);
         try {
-            TokenUtil.verifyFromRequest(request);
-            return ResponseEntity.ok().build();
+            TokenUtil.verify(token);
+            return ResponseEntity.ok("Token is valid");
         } catch (JWTVerificationException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }

@@ -2,17 +2,22 @@ package com.example.demo.service.impl;
 
 import com.example.demo.entity.User;
 import com.example.demo.entity.UserAddress;
+import com.example.demo.entity.dto.user.UserLoginDTO;
+import com.example.demo.entity.dto.user.UserRegisterDTO;
+import com.example.demo.entity.response.LoginResponse;
 import com.example.demo.exception.UserAddressNotFoundException;
-import com.example.demo.exception.UserAlreadyExistsException;
-import com.example.demo.exception.UserIncorrectUsernameOrPasswordException;
-import com.example.demo.exception.UserNotFoundException;
 import com.example.demo.repository.UserAddressRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.UserService;
+import com.example.demo.utils.TokenUtil;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.Objects;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -27,25 +32,39 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void register(User user) throws UserAlreadyExistsException {
-        if (userRepository.findByUsername(user.getUsername()) != null) {
-            throw new UserAlreadyExistsException();
+    public String register(UserRegisterDTO dto) {
+        String msg = dto.validate();
+        if (msg != null) {
+            return msg;
         }
+        if (userRepository.findByUsername(dto.getUsername()) != null) {
+            return "用户名已存在";
+        }
+        User user = new User(dto);
         userRepository.save(user);
+        return null;
     }
 
     @Override
-    public User login(String username, String password) throws UserIncorrectUsernameOrPasswordException {
-        User user = userRepository.findByUsernameAndPassword(username, password);
-        if (user == null) {
-            throw new UserIncorrectUsernameOrPasswordException();
+    public LoginResponse login(UserLoginDTO dto) {
+        String msg = dto.validate();
+        if (msg != null) {
+            return new LoginResponse(false, null, msg);
         }
-        return user;
+        User user = userRepository.findByUsernameAndPassword(dto.getUsername(), dto.getPassword());
+        if (user == null) {
+            return new LoginResponse(false, null, "用户名或密码错误");
+        }
+        String token = TokenUtil.generateToken(user);
+        if (token == null || token.isEmpty()) {
+            return new LoginResponse(false, null, "Token生成失败");
+        }
+        return new LoginResponse(true, token, null);
     }
 
     @Override
-    public User findById(Long id) throws UserNotFoundException {
-        return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("ID: "+id));
+    public Optional<User> findById(Long id) {
+        return userRepository.findById(id);
     }
 
     @Override
@@ -56,9 +75,30 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updateDefaultUserAddressById(Long addressId, Long userId) throws UserAddressNotFoundException, IllegalAccessException {
         UserAddress address = addressRepository.findById(addressId).orElseThrow(() -> new UserAddressNotFoundException("ID: "+addressId));
-        if (!Objects.equals(address.getUser().getId(), userId)) {
+        if (!address.getUser().getId().equals(userId)) {
             throw new IllegalAccessException("与收货地址所归属的用户不匹配");
         }
         userRepository.updateDefaultAddressById(addressId, userId);
     }
+
+    @Override
+     public List<User> findAll() {
+         return userRepository.findAll();
+     }
+ 
+     @Override
+     public void save(User user) {
+         userRepository.save(user);
+     }
+ 
+     @Override
+     public void removeById(Long id) {
+         userRepository.removeById(id);
+     }
+ 
+     @Override
+     public Page<User> findPage(Integer page, Integer size) {
+         PageRequest pageable = PageRequest.of(page - 1, size);
+         return userRepository.findAll(pageable);
+     }
 }

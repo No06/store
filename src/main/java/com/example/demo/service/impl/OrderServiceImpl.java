@@ -1,7 +1,7 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.entity.Order;
-import com.example.demo.entity.ProductReview;
+import com.example.demo.entity.GoodsReview;
 import com.example.demo.entity.User;
 import com.example.demo.entity.enums.FieldStatus;
 import com.example.demo.entity.enums.OrderStatus;
@@ -102,9 +102,9 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void userReview(Long id, String review) throws IllegalOrderStatusException, OrderNotFoundException {
         Order order = updateOrderStatus(id, OrderStatus.REVIEWED);
-        ProductReview productReview = order.getReview();
-        productReview.setUserReview(review);
-        order.setReview(productReview);
+        GoodsReview goodsReview = order.getReview();
+        goodsReview.setUserReview(review);
+        order.setReview(goodsReview);
         repository.save(order);
     }
 
@@ -112,9 +112,9 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void sellerReview(Long id, String review) throws OrderNotFoundException {
         Order order = repository.findById(id).orElseThrow(() -> new OrderNotFoundException("ID: "+id));
-        ProductReview productReview = order.getReview();
-        productReview.setSellerReview(review);
-        order.setReview(productReview);
+        GoodsReview goodsReview = order.getReview();
+        goodsReview.setSellerReview(review);
+        order.setReview(goodsReview);
         repository.save(order);
     }
 
@@ -122,9 +122,9 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void userAdditionReview(Long id, String review) throws OrderNotFoundException {
         Order order = repository.findById(id).orElseThrow(() -> new OrderNotFoundException("ID: "+id));
-        ProductReview productReview = order.getReview();
-        productReview.setUserAdditionReview(review);
-        order.setReview(productReview);
+        GoodsReview goodsReview = order.getReview();
+        goodsReview.setUserAdditionReview(review);
+        order.setReview(goodsReview);
         repository.save(order);
     }
 }

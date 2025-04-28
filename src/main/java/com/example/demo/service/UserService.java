@@ -1,13 +1,34 @@
 package com.example.demo.service;
 
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.data.domain.Page;
+
 import com.example.demo.entity.User;
 import com.example.demo.entity.UserAddress;
+import com.example.demo.entity.dto.user.UserLoginDTO;
+import com.example.demo.entity.dto.user.UserRegisterDTO;
+import com.example.demo.entity.response.LoginResponse;
 import com.example.demo.exception.*;
 
 public interface UserService {
-    void register(User user) throws UserAlreadyExistsException;
-    User login(String username, String password) throws UserIncorrectUsernameOrPasswordException;
-    User findById(Long id) throws UserNotFoundException;
+    String register(UserRegisterDTO dto);
+
+    LoginResponse login(UserLoginDTO dto);
+
+    Optional<User> findById(Long id);
+
     UserAddress findDefaultAddressById(Long id);
-    void updateDefaultUserAddressById(Long addressId, Long userId) throws TokenInfoNotMatchException, UserAddressNotFoundException, IllegalAccessException;
+
+    void updateDefaultUserAddressById(Long addressId, Long userId)
+            throws TokenInfoNotMatchException, UserAddressNotFoundException, IllegalAccessException;
+
+    List<User> findAll();
+
+    void save(User user);
+
+    void removeById(Long id);
+
+    Page<User> findPage(Integer page, Integer size);
 }

@@ -6,25 +6,24 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
+	private final String[] adds = {
+			"/user/**",
+			"/cart/**",
+			"/goods/update", "/goods/delete",
+			"/order/**",
+			"/address/**"
+	};
+	private final String[] excludes = {
+			"/user/register",
+			"/user/login",
+			"/user/checkToken"
+	};
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        final String[] add = {
-                "/user/**",
-                "/cart/**",
-                "/product/update", "/product/delete",
-                "/order/**",
-                "/address/**"
-        };
-        final String[] exclude = {
-                "/user/register",
-                "/user/login",
-                "/user/info",
-                "/product/category/getAll"
-        };
         registry.addInterceptor(new JwtInterceptor())
                 // 受保护的
-                .addPathPatterns(add)
+                .addPathPatterns(adds)
                 // 排除的
-                .excludePathPatterns(exclude);
+                .excludePathPatterns(excludes);
     }
 }

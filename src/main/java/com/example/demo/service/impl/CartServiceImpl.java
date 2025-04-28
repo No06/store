@@ -1,11 +1,11 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.entity.Cart;
-import com.example.demo.entity.Product;
+import com.example.demo.entity.Goods;
 import com.example.demo.entity.User;
-import com.example.demo.exception.ProductNotFoundException;
+import com.example.demo.exception.GoodsNotFoundException;
 import com.example.demo.repository.CartRepository;
-import com.example.demo.repository.ProductRepository;
+import com.example.demo.repository.GoodsRepository;
 import com.example.demo.service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,12 +19,12 @@ public class CartServiceImpl implements CartService {
 
     private final CartRepository cartRepository;
 
-    private final ProductRepository productRepository;
+    private final GoodsRepository goodsRepository;
 
     @Autowired
-    public CartServiceImpl(CartRepository cartRepository, ProductRepository productRepository) {
+    public CartServiceImpl(CartRepository cartRepository, GoodsRepository goodsRepository) {
         this.cartRepository = cartRepository;
-        this.productRepository = productRepository;
+        this.goodsRepository = goodsRepository;
     }
 
     @Override
@@ -38,20 +38,20 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public void addProductToCart(Long userId, Long productId, Integer quantity) throws ProductNotFoundException {
+    public void addGoodsToCart(Long userId, Long goodsId, Integer quantity) throws GoodsNotFoundException {
         // 检查参数是否合法
-        if (userId == null || productId == null || quantity == null || quantity < 1) {
+        if (userId == null || goodsId == null || quantity == null || quantity < 1) {
             throw new IllegalArgumentException("参数不合法");
         }
-        Product product = productRepository.findById(productId).orElse(null);
-        if (product == null) {
-            throw new ProductNotFoundException("商品不存在");
+        Goods goods = goodsRepository.findById(goodsId).orElse(null);
+        if (goods == null) {
+            throw new GoodsNotFoundException("商品不存在");
         }
-        Cart cart = cartRepository.findByUserIdAndProductId(userId, productId);
+        Cart cart = cartRepository.findByUserIdAndGoodsId(userId, goodsId);
         if (cart == null) {
             cart = new Cart();
             cart.setUser(new User(userId));
-            cart.setProduct(product);
+            cart.setGoods(goods);
             cart.setQuantity(quantity);
         } else {
             cart.setQuantity(cart.getQuantity() + quantity);
@@ -70,8 +70,8 @@ public class CartServiceImpl implements CartService {
     @Override
     public void updateCart(Long userId, Cart cart) {
         Integer quantity = cart.getQuantity();
-        Long productId = cart.getProduct().getId();
-        if (userId == null || productId == null || quantity == null || quantity < 1) {
+        Long goodsId = cart.getGoods().getId();
+        if (userId == null || goodsId == null || quantity == null || quantity < 1) {
             throw new IllegalArgumentException("参数不合法");
         }
         User user = new User();
@@ -81,11 +81,11 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public void deleteCartProduct(Long userId, Long productId) {
-        if (userId == null || productId == null) {
+    public void deleteCartGoods(Long userId, Long goodsId) {
+        if (userId == null || goodsId == null) {
             throw new IllegalArgumentException("参数不合法");
         }
-        cartRepository.removeByUserIdAndProductId(userId, productId);
+        cartRepository.removeByUserIdAndGoodsId(userId, goodsId);
     }
 
     @Override

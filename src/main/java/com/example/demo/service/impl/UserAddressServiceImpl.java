@@ -30,21 +30,13 @@ public class UserAddressServiceImpl implements UserAddressService {
 
     @Override
     public void save(UserAddress address, Long userId) throws UserNotFoundException, UserAddressQuantityAlreadyFullException {
-        UserAddress userAddress;
         User user = new User(userId);
-        // 新建的地址
-        if (address.getId() == null) {
-            Long count = addressRepository.countAllByUserId(userId);
-            // 判断如果是新建的第一个地址 则设为默认使用
-            if (count == null || count == 0) {
-                user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("ID: "+userId));
-                userAddress = address;
-                user.setDefaultAddress(userAddress);
-                userRepository.save(user);
-            } else if (count >= UserAddress.MAX_COUNT) {
-                throw new UserAddressQuantityAlreadyFullException();
-            }
-        }
+        Long count = addressRepository.countAllByUserId(userId);
+         // 新建的地址 附加判断是否超过限定数量
+         if (address.getId() == null && count >= UserAddress.MAX_COUNT) {
+             // 抛出用户收货地址数量已满异常
+             throw new UserAddressQuantityAlreadyFullException();
+         }
         address.setUser(user);
         addressRepository.save(address);
     }
@@ -58,7 +50,7 @@ public class UserAddressServiceImpl implements UserAddressService {
     public void removeByIdAndUserId(Long id, Long userId) {
         Optional<User> user = userRepository.findById(userId);
         // 如果user可以找到并且设置的默认地址等于这个地址 则先设为null再继续
-        if (user.isPresent() && Objects.equals(user.get().getDefaultAddress().getId(), id)) {
+        if (user.isPresent() && user.get().getDefaultAddress() != null && Objects.equals(user.get().getDefaultAddress().getId(), id)) {
             User u = user.get();
             u.setDefaultAddress(null);
             userRepository.save(u);

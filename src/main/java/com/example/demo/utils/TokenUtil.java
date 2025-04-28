@@ -51,11 +51,4 @@ public class TokenUtil {
             throw new JWTVerificationException("登录已过期");
         }
     }
-    public static void verifyFromRequest(HttpServletRequest request) {
-        try {
-            TokenUtil.verify(getTokenFromRequest(request));
-        } catch (JWTVerificationException e) {
-            throw e;
-        }
-    }
 }

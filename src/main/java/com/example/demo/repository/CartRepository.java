@@ -14,11 +14,11 @@ public interface CartRepository extends JpaRepository<Cart, Long> {
 
     Long countByUserId(Long userId);
 
-    Cart findByUserIdAndProductId(Long userId, Long productId);
+    Cart findByUserIdAndGoodsId(Long userId, Long goodsId);
 
     List<Cart> findByUserId(Long userId);
 
-    void removeByUserIdAndProductId(Long userId, Long productId);
+    void removeByUserIdAndGoodsId(Long userId, Long goodsId);
 
     void removeByUserId(Long userId);
 }

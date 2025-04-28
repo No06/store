@@ -1,9 +1,12 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.entity.Product;
-import com.example.demo.entity.ProductImage;
-import com.example.demo.repository.ProductRepository;
-import com.example.demo.service.ProductService;
+import com.example.demo.entity.Goods;
+import com.example.demo.entity.GoodsCategory;
+import com.example.demo.entity.GoodsPhoto;
+import com.example.demo.entity.dto.goods.GoodsCountByCategoryDTO;
+import com.example.demo.entity.dto.goods.GoodsSaveDTO;
+import com.example.demo.repository.GoodsRepository;
+import com.example.demo.service.GoodsService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,49 +20,49 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class ProductServiceImpl implements ProductService {
+public class GoodsServiceImpl implements GoodsService {
 
-    private final ProductRepository repository;
+    private final GoodsRepository repository;
 
     @Autowired
-    public ProductServiceImpl(ProductRepository productRepository) {
-        this.repository = productRepository;
+    public GoodsServiceImpl(GoodsRepository goodsRepository) {
+        this.repository = goodsRepository;
     }
 
     @Override
-    public Product findById(Long id) throws EntityNotFoundException {
+    public Goods findById(Long id) throws EntityNotFoundException {
         return repository.findById(id).orElseThrow(() -> new EntityNotFoundException("商品ID:"+ id +"不存在"));
     }
 
     @Override
-    public List<Product> findAll() {
+    public List<Goods> findAll() {
         return repository.findAll();
     }
 
     @Override
-    public List<Product> findByName(String name) {
+    public List<Goods> findByName(String name) {
         return repository.findByName(name);
     }
 
     @Override
-    public List<Product> findByCategoryName(String categoryName) {
+    public List<Goods> findByCategoryName(String categoryName) {
         return repository.findByCategoryName(categoryName);
     }
 
     @Override
-    public List<Product> findByNameAndCategoryName(String productName, String categoryName) {
-        return repository.findByNameAndCategoryName(productName, categoryName);
+    public List<Goods> findByNameAndCategoryName(String goodsName, String categoryName) {
+        return repository.findByNameAndCategoryName(goodsName, categoryName);
     }
 
     @Override
-    public List<Product> findByPriceRange(Double min, Double max) {
+    public List<Goods> findByPriceRange(Double min, Double max) {
         return repository.findByPriceRange(min, max);
     }
 
     @Override
-    public Page<Product> findByNameAndCategoryIdForPage(String name, Long category_id, Integer page, Integer size) {
+    public Page<Goods> findByNameAndCategoryIdForPage(String name, Long category_id, Integer page, Integer size) {
         Pageable pageable = PageRequest.of(page - 1, size);
-        Specification<Product> specification = (root, query, criteriaBuilder) ->  {
+        Specification<Goods> specification = (root, query, criteriaBuilder) ->  {
             // 创建一个集合，用于存放查询条件
             List<Predicate> predicates = new ArrayList<>();
             if (name != null && !name.isEmpty()) {
@@ -76,8 +79,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> findAllItemBySpec(String name, boolean inStock, Double minPrice, Double maxPrice, Long[] category_id) {
-        Specification<Product> spec = (root, query, criteriaBuilder) -> {
+    public List<Goods> findAllItemBySpec(String name, boolean inStock, Double minPrice, Double maxPrice, Long[] category_id) {
+        Specification<Goods> spec = (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
             // 关键词查找
             if (name != null) {
@@ -109,42 +112,44 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void save(Product product) {
-        Product oldProduct;
+    // TODO: 优化
+    public void save(GoodsSaveDTO dto) {
+        Goods oldGoods;
         try {
-            oldProduct = repository.findById(product.getId()).orElseThrow(
-                    () -> new EntityNotFoundException(String.valueOf(product.getId()))
+            oldGoods = repository.findById(dto.id).orElseThrow(
+                    () -> new EntityNotFoundException(String.valueOf(dto.id))
             );
         } catch (Exception e) {
-            product.getImages().forEach((image) -> image.setProduct(product));
-            repository.save(product);
+            Goods newGoods = new Goods(dto);
+            dto.photos.forEach((photo) -> photo.setGoods(newGoods));
+            repository.save(newGoods);
             return;
         }
-        if (product.getName() != null) {
-            oldProduct.setName(product.getName());
+        if (dto.name != null) {
+            oldGoods.setName(dto.name);
         }
-        if (product.getPrice() != null) {
-            oldProduct.setPrice(product.getPrice());
+        if (dto.price != null) {
+            oldGoods.setPrice(dto.price);
         }
-        if (product.getDiscount() != null) {
-            oldProduct.setDiscount(product.getDiscount());
+        if (dto.discount != null) {
+            oldGoods.setDiscount(dto.discount);
         }
-        if (product.getStock() != null) {
-            oldProduct.setStock(product.getStock());
+        if (dto.stock != null) {
+            oldGoods.setStock(dto.stock);
         }
-        if (product.getDescription() != null) {
-            oldProduct.setDescription(product.getDescription());
+        if (dto.description != null) {
+            oldGoods.setDescription(dto.description);
         }
-        if (product.getCategory() != null) {
-            oldProduct.setCategory(product.getCategory());
+        if (dto.category != null) {
+            oldGoods.setCategory(dto.category);
         }
-        if (product.getImages() != null) {
-            oldProduct.getImages().clear();
-            for (ProductImage image: product.getImages()) {
-                oldProduct.addImage(image);
+        if (dto.photos != null) {
+            oldGoods.getPhotos().clear();
+            for (GoodsPhoto image: dto.photos) {
+                oldGoods.addPhoto(image);
             }
         }
-        repository.save(oldProduct);
+        repository.save(oldGoods);
     }
 
     @Override
@@ -153,8 +158,9 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Object[]> countByCategory() {
-        return repository.countAllByCategory();
+    public List<GoodsCountByCategoryDTO> countByCategory() {
+        List<Object[]> result = repository.countAllByCategory();
+        return result.stream().map((e) -> new GoodsCountByCategoryDTO((GoodsCategory) e[0], (Long) e[1])).toList();
     }
 
     @Override
