@@ -4,9 +4,7 @@ import com.example.demo.entity.User;
 import com.example.demo.entity.UserAddress;
 import com.example.demo.entity.dto.user.UserLoginDTO;
 import com.example.demo.entity.dto.user.UserRegisterDTO;
-import com.example.demo.entity.response.LoginResponse;
-import com.example.demo.exception.UserAddressNotFoundException;
-import com.example.demo.repository.UserAddressRepository;
+import com.example.demo.models.response.LoginResponse;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.UserService;
 import com.example.demo.utils.TokenUtil;
@@ -23,12 +21,9 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
-    private final UserAddressRepository addressRepository;
-
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, UserAddressRepository addressRepository) {
+    public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.addressRepository = addressRepository;
     }
 
     @Override
@@ -37,7 +32,7 @@ public class UserServiceImpl implements UserService {
         if (msg != null) {
             return msg;
         }
-        if (userRepository.findByUsername(dto.getUsername()) != null) {
+        if (userRepository.findByUsername(dto.getUsername()).isPresent()) {
             return "用户名已存在";
         }
         User user = new User(dto);
@@ -68,16 +63,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Optional<User> findByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
+
+    @Override
     public UserAddress findDefaultAddressById(Long id) {
         return userRepository.findDefaultAddressById(id);
     }
 
     @Override
-    public void updateDefaultUserAddressById(Long addressId, Long userId) throws UserAddressNotFoundException, IllegalAccessException {
-        UserAddress address = addressRepository.findById(addressId).orElseThrow(() -> new UserAddressNotFoundException("ID: "+addressId));
-        if (!address.getUser().getId().equals(userId)) {
-            throw new IllegalAccessException("与收货地址所归属的用户不匹配");
-        }
+    public void updateDefaultUserAddressById(Long addressId, Long userId) {
         userRepository.updateDefaultAddressById(addressId, userId);
     }
 

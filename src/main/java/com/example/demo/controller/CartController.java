@@ -1,25 +1,28 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.Cart;
-import com.example.demo.exception.CartNotFoundException;
-import com.example.demo.exception.GoodsNotFoundException;
+import com.example.demo.entity.Goods;
 import com.example.demo.service.CartService;
+import com.example.demo.service.GoodsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/cart")
 public class CartController {
 
     private final CartService cartService;
+    private final GoodsService goodsService;
 
     @Autowired
-    public CartController(CartService cartService) {
+    public CartController(CartService cartService, GoodsService goodsService) {
         this.cartService = cartService;
+        this.goodsService = goodsService;
     }
 
     @GetMapping("/quantityCount")
@@ -33,35 +36,62 @@ public class CartController {
     }
 
     @PutMapping("/add")
-    public ResponseEntity<?> addGoodsToCart(
+    public ResponseEntity<String> addGoodsToCart(
             @RequestParam Long goodsId,
             @RequestParam Integer quantity,
             @RequestAttribute Long userId
     ) {
-        try {
-            cartService.addGoodsToCart(userId, goodsId, quantity);
-        } catch (GoodsNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        if (userId == null) {
+            return ResponseEntity.badRequest().body("userId is null");
         }
+        if (goodsId == null) {
+            return ResponseEntity.badRequest().body("goodsId is null");
+        }
+        if (quantity == null) {
+            return ResponseEntity.badRequest().body("quantity is null");
+        }
+        Optional<Goods> result = goodsService.findById(goodsId);
+        if (result.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("goods not found");
+        }
+        cartService.addGoodsToCart(userId, goodsId, quantity);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/list")
     public ResponseEntity<List<Cart>> getCartByUserId(@RequestAttribute Long userId) {
-        List<Cart> data = cartService.getCartByUserId(userId);
-        return ResponseEntity.ok(data);
+        if (userId == null) {
+            ResponseEntity.badRequest().body("userId is null");
+        }
+        return ResponseEntity.ok(cartService.getCartByUserId(userId));
     }
 
     @PatchMapping("/update")
-    public ResponseEntity<?> updateCartQuantity(
+    public ResponseEntity<String> updateCartQuantity(
             @RequestBody Cart cart,
             @RequestAttribute Long userId
     ) {
-        try {
-            cartService.updateCart(userId, cart);
-        } catch (CartNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        if (userId == null) {
+            return ResponseEntity.badRequest().body("userId is null");
         }
+        if (cart == null) {
+            return ResponseEntity.badRequest().body("cart is null");
+        }
+
+        Long goodsId = cart.getGoods().getId();
+        if (goodsId == null) {
+            return ResponseEntity.badRequest().body("goods id is null");
+        }
+
+        Integer quantity = cart.getQuantity();
+        if (quantity == null) {
+            return ResponseEntity.badRequest().body("quantity is null");
+        }
+        if (quantity < 1) {
+            return ResponseEntity.badRequest().body("quantity is less than 1");
+        }
+
+        cartService.updateCart(userId, cart);
         return ResponseEntity.ok().build();
     }
 
@@ -70,12 +100,21 @@ public class CartController {
             @RequestParam Long goodsId,
             @RequestAttribute Long userId
     ) {
+        if (userId == null) {
+            ResponseEntity.badRequest().body("userId is null");
+        }
+        if (goodsId == null) {
+            ResponseEntity.badRequest().body("goodsId is null");
+        }
         cartService.deleteCartGoods(userId, goodsId);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/clear")
     public ResponseEntity<Void> clearCart(@RequestAttribute Long userId) {
+        if (userId == null) {
+            ResponseEntity.badRequest().body("userId is null");
+        }
         cartService.clearCart(userId);
         return ResponseEntity.ok().build();
     }

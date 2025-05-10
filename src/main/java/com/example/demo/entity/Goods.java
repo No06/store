@@ -54,11 +54,13 @@ public class Goods {
     @OrderBy("rank asc")
     private List<GoodsPhoto> photos;
 
-    public void addPhoto(GoodsPhoto goodsPhoto) {
-        photos.add(goodsPhoto);
-    }
+    public Goods() {}
 
     public Goods(GoodsSaveDTO dto) {
         this.id = dto.id;
+    }
+
+    public void addPhoto(GoodsPhoto goodsPhoto) {
+        photos.add(goodsPhoto);
     }
 }

@@ -25,10 +25,10 @@ public interface GoodsRepository extends JpaRepository<Goods, Long>, JpaSpecific
     List<Goods> findByPriceRange(Double min, Double max);
 
     @EntityGraph(
-            attributePaths = {"name", "price", "images.image_url"},
+            attributePaths = {"name", "price", "photos.photo_url"},
             type = EntityGraph.EntityGraphType.FETCH
     )
-    @Query("select p from Goods p join p.images i where i.rank = (select min(i2.rank) from GoodsPhoto i2 where i2.goods.id = p.id)")
+    @Query("select p from Goods p join p.photos i where i.rank = (select min(i2.rank) from GoodsPhoto i2 where i2.goods.id = p.id)")
     List<Goods> findAllWithMinRankImage();
 
     // FIXME: 不使用Object[]

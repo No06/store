@@ -21,7 +21,7 @@ public class GoodsPhoto {
     private Long id;
 
     @Column(columnDefinition="tinytext")
-    private String image_url;
+    private String photo_url;
 
     @ManyToOne
     @JoinColumn(name = "goods_id")

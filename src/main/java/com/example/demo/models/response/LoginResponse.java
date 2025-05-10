@@ -1,4 +1,4 @@
-package com.example.demo.entity.response;
+package com.example.demo.models.response;
 
 public class LoginResponse {
     public final boolean success;

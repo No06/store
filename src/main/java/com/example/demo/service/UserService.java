@@ -9,8 +9,7 @@ import com.example.demo.entity.User;
 import com.example.demo.entity.UserAddress;
 import com.example.demo.entity.dto.user.UserLoginDTO;
 import com.example.demo.entity.dto.user.UserRegisterDTO;
-import com.example.demo.entity.response.LoginResponse;
-import com.example.demo.exception.*;
+import com.example.demo.models.response.LoginResponse;
 
 public interface UserService {
     String register(UserRegisterDTO dto);
@@ -19,10 +18,11 @@ public interface UserService {
 
     Optional<User> findById(Long id);
 
+    Optional<User> findByUsername(String name);
+
     UserAddress findDefaultAddressById(Long id);
 
-    void updateDefaultUserAddressById(Long addressId, Long userId)
-            throws TokenInfoNotMatchException, UserAddressNotFoundException, IllegalAccessException;
+    void updateDefaultUserAddressById(Long addressId, Long userId);
 
     List<User> findAll();
 

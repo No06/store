@@ -29,13 +29,13 @@ public class OrderController {
     }
 
     @PutMapping("/save")
-    public ResponseEntity<Object> save(@RequestBody Order order, @RequestAttribute Long userId) {
+    public ResponseEntity<Void> save(@RequestBody Order order, @RequestAttribute Long userId) {
         service.create(order, userId);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/deleteById")
-    public ResponseEntity<Object> deleteById(@RequestParam Long id) {
+    public ResponseEntity<Void> deleteById(@RequestParam Long id) {
         service.deleteById(id);
         return ResponseEntity.ok().build();
     }

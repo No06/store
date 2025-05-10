@@ -3,15 +3,15 @@ package com.example.demo.controller;
 import com.example.demo.entity.Goods;
 import com.example.demo.entity.dto.goods.GoodsCountByCategoryDTO;
 import com.example.demo.entity.dto.goods.GoodsSaveDTO;
+import com.example.demo.entity.dto.goods.GoodsShowItemDTO;
 import com.example.demo.service.GoodsService;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/goods")
@@ -37,22 +37,16 @@ public class GoodsController {
 
     // 根据ID获取商品
     @GetMapping("/getById/{id}")
-    public ResponseEntity<?> getById(@PathVariable Long id) {
-        try {
-            return ResponseEntity.ok(service.findById(id));
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<Goods> getById(@PathVariable Long id) {
+        Optional<Goods> goods = service.findById(id);
+        return goods.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     // 根据ID获取商品简单信息
     @GetMapping("/getItemById/{id}")
-    public ResponseEntity<?> getItemById(@PathVariable Long id) {
-        try {
-            return ResponseEntity.ok(service.findById(id));
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<Goods> getItemById(@PathVariable Long id) {
+        Optional<Goods> goods = service.findById(id);
+        return goods.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     // 根据商品名获取所有商品
@@ -63,8 +57,8 @@ public class GoodsController {
 
     // 根据商品名获取所有商品简单信息
     @GetMapping("/getItemsByName")
-    public List<Goods> getItemsByName(@RequestParam("name") String name) {
-        return service.findByName(name);
+    public List<GoodsShowItemDTO> getItemsByName(@RequestParam("name") String name) {
+        return service.findAllItemBySpec(name, null, null, null, null);
     }
 
     // 根据类型获取所有商品
@@ -104,7 +98,7 @@ public class GoodsController {
 
     // 模糊查找
     @GetMapping("/getAllItemBySpec")
-    public List<Goods> getAllItemBySpec(
+    public List<GoodsShowItemDTO> getAllItemBySpec(
             @RequestParam(required = false) String name,
             @RequestParam(defaultValue = "false") boolean inStock,
             @RequestParam(required = false) Double minPrice,
@@ -129,22 +123,17 @@ public class GoodsController {
     // 保存商品
     @PutMapping("/save")
     public ResponseEntity<String> updateGoods(@RequestBody GoodsSaveDTO goods) {
-        try {
-            service.save(goods);
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(e.getMessage());
-        }
+        service.save(goods);
         return ResponseEntity.ok().build();
     }
 
     // 删除商品
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id) {
-        try {
-            service.deleteById(id);
-        } catch (EmptyResultDataAccessException ex) {
-            throw new EntityNotFoundException("Entity with ID: [" + id + "] was not found");
+    public ResponseEntity<String> delete(@PathVariable Long id) {
+        if (service.findById(id).isEmpty()) {
+            return ResponseEntity.notFound().build();
         }
+        service.deleteById(id);
         return ResponseEntity.ok("Delete success");
     }
 

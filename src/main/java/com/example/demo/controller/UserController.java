@@ -6,8 +6,8 @@ import com.example.demo.entity.UserAddress;
 import com.example.demo.entity.dto.user.UserInfoDTO;
 import com.example.demo.entity.dto.user.UserLoginDTO;
 import com.example.demo.entity.dto.user.UserRegisterDTO;
-import com.example.demo.entity.response.LoginResponse;
-import com.example.demo.exception.*;
+import com.example.demo.models.response.LoginResponse;
+import com.example.demo.service.UserAddressService;
 import com.example.demo.service.UserService;
 import com.example.demo.utils.TokenUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,17 +23,23 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/user")
 public class UserController {
     private final UserService userService;
-    
+    private final UserAddressService userAddressService;
+
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, UserAddressService userAddressService) {
         this.userService = userService;
+        this.userAddressService = userAddressService;
     }
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody UserRegisterDTO dto) {
-        String msg = userService.register(dto);
+        String msg = dto.validate();
         if (msg != null) {
             return ResponseEntity.badRequest().body(msg);
+        }
+        Optional<User> user = userService.findByUsername(dto.getUsername());
+        if (user.isPresent()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Username already exists");
         }
         return ResponseEntity.ok(null);
     }
@@ -50,11 +56,7 @@ public class UserController {
     @GetMapping("/info")
     public ResponseEntity<UserInfoDTO> info(@RequestAttribute Long userId) {
         Optional<User> user = userService.findById(userId);
-        if (user.isPresent()) {
-            return ResponseEntity.ok(new UserInfoDTO(user.get()));
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
+        return user.map(value -> ResponseEntity.ok(new UserInfoDTO(value))).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(null));
     }
 
     @GetMapping("/checkToken")
@@ -76,11 +78,18 @@ public class UserController {
 
     @PutMapping("/update/defaultAddress")
     public ResponseEntity<String> updateDefaultAddress(@RequestParam Long addressId, @RequestAttribute Long userId) {
-        try {
-            userService.updateDefaultUserAddressById(addressId, userId);
-        } catch (TokenInfoNotMatchException | UserAddressNotFoundException | IllegalAccessException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+        Optional<UserAddress> userAddress = userAddressService.findById(addressId);
+        if (userAddress.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("address does not exist");
         }
+        Optional<User> user = userService.findById(userId);
+        if (user.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("user does not exist");
+        }
+        if (!userAddress.get().getUser().getId().equals(userId)) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("User is not in this address");
+        }
+        userService.updateDefaultUserAddressById(addressId, userId);
         return ResponseEntity.ok().build();
     }
 }

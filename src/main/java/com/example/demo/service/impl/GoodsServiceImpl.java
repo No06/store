@@ -5,9 +5,9 @@ import com.example.demo.entity.GoodsCategory;
 import com.example.demo.entity.GoodsPhoto;
 import com.example.demo.entity.dto.goods.GoodsCountByCategoryDTO;
 import com.example.demo.entity.dto.goods.GoodsSaveDTO;
+import com.example.demo.entity.dto.goods.GoodsShowItemDTO;
 import com.example.demo.repository.GoodsRepository;
 import com.example.demo.service.GoodsService;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class GoodsServiceImpl implements GoodsService {
@@ -30,8 +31,8 @@ public class GoodsServiceImpl implements GoodsService {
     }
 
     @Override
-    public Goods findById(Long id) throws EntityNotFoundException {
-        return repository.findById(id).orElseThrow(() -> new EntityNotFoundException("商品ID:"+ id +"不存在"));
+    public Optional<Goods> findById(Long id) {
+        return repository.findById(id);
     }
 
     @Override
@@ -79,7 +80,7 @@ public class GoodsServiceImpl implements GoodsService {
     }
 
     @Override
-    public List<Goods> findAllItemBySpec(String name, boolean inStock, Double minPrice, Double maxPrice, Long[] category_id) {
+    public List<GoodsShowItemDTO> findAllItemBySpec(String name, Boolean inStock, Double minPrice, Double maxPrice, Long[] category_id) {
         Specification<Goods> spec = (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
             // 关键词查找
@@ -87,7 +88,7 @@ public class GoodsServiceImpl implements GoodsService {
                 predicates.add(criteriaBuilder.like(root.get("name"), "%" + name + "%"));
             }
             // 仅看有货
-            if (inStock) {
+            if (inStock != null && inStock) {
                 predicates.add(criteriaBuilder.greaterThan(root.get("stock"), 0));
             }
             // 价格筛选
@@ -108,23 +109,21 @@ public class GoodsServiceImpl implements GoodsService {
 
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
-        return repository.findAll(spec);
+        return repository.findAll(spec).stream().map(GoodsShowItemDTO::new).toList();
     }
 
     @Override
-    // TODO: 优化
     public void save(GoodsSaveDTO dto) {
         Goods oldGoods;
-        try {
-            oldGoods = repository.findById(dto.id).orElseThrow(
-                    () -> new EntityNotFoundException(String.valueOf(dto.id))
-            );
-        } catch (Exception e) {
+        Optional<Goods> result = repository.findById(dto.id);
+        if (result.isEmpty()) {
             Goods newGoods = new Goods(dto);
             dto.photos.forEach((photo) -> photo.setGoods(newGoods));
             repository.save(newGoods);
             return;
         }
+
+        oldGoods = result.get();
         if (dto.name != null) {
             oldGoods.setName(dto.name);
         }
