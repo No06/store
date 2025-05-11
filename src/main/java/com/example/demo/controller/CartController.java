@@ -4,6 +4,8 @@ import com.example.demo.entity.Cart;
 import com.example.demo.entity.Goods;
 import com.example.demo.service.CartService;
 import com.example.demo.service.GoodsService;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+@Tag(name="购物车接口", description="购物车相关API")
 @RestController
 @RequestMapping("/cart")
 public class CartController {
@@ -25,16 +28,19 @@ public class CartController {
         this.goodsService = goodsService;
     }
 
+    @Operation(summary="获取购物车商品数量")
     @GetMapping("/quantityCount")
     public ResponseEntity<Long> getQuantityCount(@RequestAttribute Long userId) {
         return ResponseEntity.ok(cartService.quantitySumByUserId(userId));
     }
 
+    @Operation(summary="获取购物车商品个数")
     @GetMapping("/count")
     public ResponseEntity<Long> getCount(@RequestAttribute Long userId) {
         return ResponseEntity.ok(cartService.countByUserId(userId));
     }
 
+    @Operation(summary="添加商品到购物车")
     @PutMapping("/add")
     public ResponseEntity<String> addGoodsToCart(
             @RequestParam Long goodsId,
@@ -58,6 +64,7 @@ public class CartController {
         return ResponseEntity.ok().build();
     }
 
+    @Operation(summary="获取用户购物车列表")
     @GetMapping("/list")
     public ResponseEntity<List<Cart>> getCartByUserId(@RequestAttribute Long userId) {
         if (userId == null) {
@@ -66,6 +73,7 @@ public class CartController {
         return ResponseEntity.ok(cartService.getCartByUserId(userId));
     }
 
+    @Operation(summary="更新购物车商品数量")
     @PatchMapping("/update")
     public ResponseEntity<String> updateCartQuantity(
             @RequestBody Cart cart,
@@ -95,6 +103,7 @@ public class CartController {
         return ResponseEntity.ok().build();
     }
 
+    @Operation(summary="移除购物车商品")
     @DeleteMapping("/delete")
     public ResponseEntity<Void> deleteCartGoods(
             @RequestParam Long goodsId,
@@ -110,6 +119,7 @@ public class CartController {
         return ResponseEntity.ok().build();
     }
 
+    @Operation(summary="清空购物车")
     @DeleteMapping("/clear")
     public ResponseEntity<Void> clearCart(@RequestAttribute Long userId) {
         if (userId == null) {

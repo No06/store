@@ -11,6 +11,8 @@ import com.example.demo.service.UserAddressService;
 import com.example.demo.service.UserService;
 import com.example.demo.utils.TokenUtil;
 import jakarta.servlet.http.HttpServletRequest;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 
 import java.util.Optional;
 
@@ -19,6 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(name="用户接口", description="用户相关API")
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -31,6 +34,7 @@ public class UserController {
         this.userAddressService = userAddressService;
     }
 
+    @Operation(summary="用户注册接口")
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody UserRegisterDTO dto) {
         String msg = dto.validate();
@@ -44,6 +48,7 @@ public class UserController {
         return ResponseEntity.ok(null);
     }
 
+    @Operation(summary="用户登录接口")
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody UserLoginDTO dto) {
         LoginResponse resp = userService.login(dto);
@@ -53,12 +58,14 @@ public class UserController {
         return ResponseEntity.ok(resp.data);
     }
 
+    @Operation(summary="获取用户信息")
     @GetMapping("/info")
     public ResponseEntity<UserInfoDTO> info(@RequestAttribute Long userId) {
         Optional<User> user = userService.findById(userId);
         return user.map(value -> ResponseEntity.ok(new UserInfoDTO(value))).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(null));
     }
 
+    @Operation(summary="检查 Token")
     @GetMapping("/checkToken")
     public ResponseEntity<String> checkToken(HttpServletRequest request) {
         String token = TokenUtil.getTokenFromRequest(request);
@@ -70,12 +77,14 @@ public class UserController {
         }
     }
 
+    @Operation(summary="获取默认地址")
     @GetMapping("/get/defaultAddress")
     public ResponseEntity<UserAddress> getDefaultAddress(@RequestAttribute Long userId) {
         UserAddress address = userService.findDefaultAddressById(userId);
         return ResponseEntity.ok(address);
     }
 
+    @Operation(summary="更新默认地址")
     @PutMapping("/update/defaultAddress")
     public ResponseEntity<String> updateDefaultAddress(@RequestParam Long addressId, @RequestAttribute Long userId) {
         Optional<UserAddress> userAddress = userAddressService.findById(addressId);
