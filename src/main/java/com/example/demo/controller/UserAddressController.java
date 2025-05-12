@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
-@Tag(name="地址接口", description="用户地址相关API")
+@Tag(name="用户收货地址接口")
 @RestController
 @RequestMapping("/address")
 public class UserAddressController {
@@ -27,7 +27,7 @@ public class UserAddressController {
         this.userService = userService;
     }
 
-    @Operation(summary="保存地址信息")
+    @Operation(summary="保存地址信息", description="需要登录\n如果是新建的地址，附加判断是否超过限定数量")
     @PutMapping("/save")
     public ResponseEntity<String> save(@RequestBody UserAddress dto, @RequestAttribute Long userId) {
         Long count = userAddressService.countAllByUserId(userId);
@@ -39,14 +39,14 @@ public class UserAddressController {
         return ResponseEntity.ok().build();
     }
 
-    @Operation(summary="批量保存地址信息")
+    @Operation(summary="批量保存地址信息", description="需要登录")
     @PutMapping("/saveAll")
     public ResponseEntity<Void> saveAll(@RequestBody List<UserAddress> dtoList) {
         userAddressService.saveAll(dtoList);
         return ResponseEntity.ok().build();
     }
 
-    @Operation(summary="删除地址信息")
+    @Operation(summary="删除地址信息", description="需要登录")
     @DeleteMapping("/delete")
     public ResponseEntity<String> delete(
             @RequestParam Long id,
@@ -65,14 +65,14 @@ public class UserAddressController {
         return ResponseEntity.ok().build();
     }
 
-    @Operation(summary="获取用户下所有地址")
+    @Operation(summary="获取用户下所有地址", description="需要登录")
     @GetMapping("/get/byUser")
     public ResponseEntity<List<UserAddress>> getAllByUserId(@RequestAttribute Long userId) {
         List<UserAddress> vos = userAddressService.findAllByUserId(userId);
         return ResponseEntity.ok(vos);
     }
 
-    @Operation(summary="根据ID查询地址")
+    @Operation(summary="根据ID查询地址", description="需要登录")
     @GetMapping("/get/byId/{id}")
     public ResponseEntity<UserAddress> getById(@PathVariable Long id) {
         Optional<UserAddress> userAddress = userAddressService.findById(id);

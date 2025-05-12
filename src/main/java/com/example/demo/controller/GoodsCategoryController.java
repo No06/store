@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Tag(name="商品分类接口", description="分类相关API")
+@Tag(name="商品类接口")
 @RestController
 @RequestMapping("/goods/category")
 public class GoodsCategoryController {

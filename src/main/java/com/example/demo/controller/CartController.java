@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
-@Tag(name="购物车接口", description="购物车相关API")
+@Tag(name="购物车接口")
 @RestController
 @RequestMapping("/cart")
 public class CartController {

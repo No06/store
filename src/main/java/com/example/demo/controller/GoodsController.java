@@ -12,36 +12,29 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
 
-@Tag(name="商品接口", description="商品接口相关API")
+@Tag(name="商品接口")
 @RestController
 @RequestMapping("/goods")
 public class GoodsController {
     private final GoodsService service;
     private final GoodsCategoryService categoryService;
-    private final GoodsPhotoService photoService;
 
     @Autowired
     public GoodsController(GoodsService service, GoodsCategoryService categoryService, GoodsPhotoService photoService) {
         this.service = service;
         this.categoryService = categoryService;
-        this.photoService = photoService;
     }
 
     @Operation(summary="获取所有商品")
     @GetMapping("/getAll")
     public List<Goods> getAll() {
-        return service.findAll();
-    }
-
-    @Operation(summary="获取所有商品简单信息")
-    @GetMapping("/getAllItems")
-    public List<Goods> getAllItems() {
         return service.findAll();
     }
 
@@ -65,21 +58,9 @@ public class GoodsController {
         return service.findByName(name);
     }
 
-    @Operation(summary="根据商品名获取商品简单信息")
-    @GetMapping("/getItemsByName")
-    public List<GoodsShowItemDTO> getItemsByName(@RequestParam("name") String name) {
-        return service.findAllItemBySpec(name, null, null, null, null);
-    }
-
     @Operation(summary="根据类型获取商品")
     @GetMapping("/getByCategory")
     public List<Goods> getByCategory(@RequestParam("categoryName") String categoryName) {
-        return service.findByCategoryName(categoryName);
-    }
-
-    @Operation(summary="根据类型获取商品简单信息")
-    @GetMapping("/getItemsByCategory")
-    public List<Goods> getItemsByCategory(@RequestParam("categoryName") String categoryName) {
         return service.findByCategoryName(categoryName);
     }
 
@@ -130,9 +111,16 @@ public class GoodsController {
         return service.countByCategory();
     }
 
-    @Operation(summary="保存商品")
+    @Operation(summary="保存商品", description = """
+            需要管理员权限
+            如果传入的 id 不存在，则创建新的商品
+            如果传入的 id 存在，则更新对应的商品""")
     @PutMapping("/save")
-    public ResponseEntity<String> save(@RequestBody GoodsSaveDTO dto) {
+    public ResponseEntity<String> save(@RequestBody GoodsSaveDTO dto, @RequestAttribute Boolean isAdmin) {
+        if (isAdmin == null || !isAdmin) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("operation is not allow");
+        }
+
         Goods goods = new Goods(dto);
 
         if (goods.getCategory().getId() != null) {
@@ -152,9 +140,12 @@ public class GoodsController {
         return ResponseEntity.ok().build();
     }
 
-    @Operation(summary="删除商品")
+    @Operation(summary="删除商品", description = "需要登录和管理员权限")
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> delete(@PathVariable Long id) {
+    public ResponseEntity<String> delete(@PathVariable Long id, @RequestAttribute Boolean isAdmin) {
+        if (isAdmin == null || !isAdmin) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("operation is not allow");
+        }
         if (service.findById(id).isEmpty()) {
             return ResponseEntity.notFound().build();
         }

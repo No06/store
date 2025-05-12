@@ -22,7 +22,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name="用户接口", description="用户相关API")
+@Tag(name="用户接口")
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -35,7 +35,7 @@ public class UserController {
         this.userAddressService = userAddressService;
     }
 
-    @Operation(summary="用户注册接口")
+    @Operation(summary="注册")
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody UserRegisterDTO dto) {
         String msg = dto.validate();
@@ -50,7 +50,7 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    @Operation(summary="用户登录接口")
+    @Operation(summary="登录")
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody UserLoginDTO dto) {
         String validateMsg = dto.validate();
@@ -68,14 +68,14 @@ public class UserController {
         return ResponseEntity.ok(token);
     }
 
-    @Operation(summary="获取用户信息")
+    @Operation(summary="获取用户信息", description = "需要登录，根据 token 获取用户信息")
     @GetMapping("/info")
     public ResponseEntity<UserInfoDTO> info(@RequestAttribute Long userId) {
         Optional<User> user = userService.findById(userId);
         return user.map(value -> ResponseEntity.ok(new UserInfoDTO(value))).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(null));
     }
 
-    @Operation(summary="检查 Token")
+    @Operation(summary="获取 Token 有效性")
     @GetMapping("/checkToken")
     public ResponseEntity<String> checkToken(HttpServletRequest request) {
         String token = TokenUtil.getTokenFromRequest(request);
@@ -87,14 +87,14 @@ public class UserController {
         }
     }
 
-    @Operation(summary="获取默认地址")
+    @Operation(summary="获取默认地址", description = "需要登录")
     @GetMapping("/get/defaultAddress")
     public ResponseEntity<UserAddress> getDefaultAddress(@RequestAttribute Long userId) {
         UserAddress address = userService.findDefaultAddressById(userId);
         return ResponseEntity.ok(address);
     }
 
-    @Operation(summary="更新默认地址")
+    @Operation(summary="更新默认地址", description = "需要登录")
     @PutMapping("/update/defaultAddress")
     public ResponseEntity<String> updateDefaultAddress(@RequestParam Long addressId, @RequestAttribute Long userId) {
         Optional<UserAddress> userAddress = userAddressService.findById(addressId);
@@ -112,7 +112,7 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    // TODO: 安全
+    @Operation(summary="获取所有用户信息", description = "需要登录和管理员权限")
     @GetMapping("/get/all")
     public ResponseEntity<List<User>> getAll(@RequestAttribute Boolean isAdmin) {
         if (isAdmin) {
@@ -122,6 +122,7 @@ public class UserController {
     }
 
     @DeleteMapping("/remove/byId/{id}")
+    @Operation(summary="删除用户", description = "需要登录和管理员权限")
     public ResponseEntity<Void> removeById(@PathVariable Long id, @RequestAttribute Boolean isAdmin) {
         if (isAdmin) {
             userService.removeById(id);
@@ -131,6 +132,7 @@ public class UserController {
     }
 
     @PutMapping("/save")
+    @Operation(summary="保存用户", description = "需要管理员权限")
     public ResponseEntity<Void> save(@RequestBody User user, @RequestAttribute Boolean isAdmin) {
         if (isAdmin) {
             userService.save(user);
@@ -140,6 +142,7 @@ public class UserController {
     }
 
     @GetMapping("/get/page")
+    @Operation(summary="分页获取用户信息", description = "需要登录和管理员权限")
     public ResponseEntity<Page<User>> getPage(
             @RequestParam Integer page,
             @RequestParam Integer size,
