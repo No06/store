@@ -5,6 +5,8 @@ import com.example.demo.entity.Cart;
 import java.util.List;
 
 public interface CartService {
+    Cart findCartByIdAndUserId(Long id, Long userId);
+
     Long quantitySumByUserId(Long userId);
 
     Long countByUserId(Long userId);

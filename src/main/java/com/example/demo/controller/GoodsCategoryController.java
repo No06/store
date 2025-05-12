@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,7 +34,10 @@ public class GoodsCategoryController {
 
     @Operation(summary="保存分类信息")
     @PutMapping("/save")
-    public ResponseEntity<Void> save(@RequestBody GoodsCategory category) {
+    public ResponseEntity<String> save(@RequestBody GoodsCategory category) {
+        if (category.getId() == null && categoryService.existsByName(category.getName())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("category name: " + category.getName() + " is already exist.");
+        }
         categoryService.save(category);
         return ResponseEntity.ok().build();
     }

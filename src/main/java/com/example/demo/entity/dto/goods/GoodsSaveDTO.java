@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import com.example.demo.entity.GoodsCategory;
-import com.example.demo.entity.GoodsPhoto;
 
 public class GoodsSaveDTO {
     public final Long id;
@@ -14,10 +13,10 @@ public class GoodsSaveDTO {
     public final Integer stock;
     public final String description;
     public final GoodsCategory category;
-    public final List<GoodsPhoto> photos;
+    public final List<GoodsSavePhotoDTO> photos;
 
     public GoodsSaveDTO(Long id, String name, BigDecimal price, BigDecimal discount, Integer stock, String description,
-            GoodsCategory category, List<GoodsPhoto> photos) {
+            GoodsCategory category, List<GoodsSavePhotoDTO> photos) {
         this.id = id;
         this.name = name;
         this.price = price;

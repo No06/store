@@ -1,8 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.entity.Goods;
-import com.example.demo.entity.dto.goods.GoodsCountByCategoryDTO;
-import com.example.demo.entity.dto.goods.GoodsSaveDTO;
+import com.example.demo.entity.vo.GoodsCategoryWithCountVO;
 
 import com.example.demo.entity.dto.goods.GoodsShowItemDTO;
 import org.springframework.data.domain.Page;
@@ -19,9 +18,9 @@ public interface GoodsService {
     List<Goods> findByPriceRange(Double min, Double max);
     Page<Goods> findByNameAndCategoryIdForPage(String name, Long category_id, Integer page, Integer size);
     List<GoodsShowItemDTO> findAllItemBySpec(String name, Boolean inStock, Double minPrice, Double maxPrice, Long[] category_id);
-    void save(GoodsSaveDTO goods);
+    void save(Goods goods);
     void deleteById(Long id);
-    List<GoodsCountByCategoryDTO> countByCategory();
+    List<GoodsCategoryWithCountVO> countByCategory();
     Long count();
     Long countByCategoryId(Long categoryId);
 }

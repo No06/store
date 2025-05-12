@@ -2,6 +2,8 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.Cart;
 import com.example.demo.entity.Goods;
+import com.example.demo.entity.dto.cart.UpdateCartDTO;
+import com.example.demo.entity.vo.CartVO;
 import com.example.demo.service.CartService;
 import com.example.demo.service.GoodsService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -66,44 +68,46 @@ public class CartController {
 
     @Operation(summary="获取用户购物车列表")
     @GetMapping("/list")
-    public ResponseEntity<List<Cart>> getCartByUserId(@RequestAttribute Long userId) {
+    public ResponseEntity<List<CartVO>> getCartByUserId(@RequestAttribute Long userId) {
         if (userId == null) {
             ResponseEntity.badRequest().body("userId is null");
         }
-        return ResponseEntity.ok(cartService.getCartByUserId(userId));
+        return ResponseEntity.ok(cartService.getCartByUserId(userId).stream().map(CartVO::new).toList());
     }
 
     @Operation(summary="更新购物车商品数量")
     @PatchMapping("/update")
-    public ResponseEntity<String> updateCartQuantity(
-            @RequestBody Cart cart,
+    public ResponseEntity<String> update(
+            @RequestBody UpdateCartDTO dto,
             @RequestAttribute Long userId
     ) {
         if (userId == null) {
             return ResponseEntity.badRequest().body("userId is null");
         }
-        if (cart == null) {
+        if (dto == null) {
             return ResponseEntity.badRequest().body("cart is null");
         }
-
-        Long goodsId = cart.getGoods().getId();
-        if (goodsId == null) {
-            return ResponseEntity.badRequest().body("goods id is null");
+        if (dto.id == null) {
+            return ResponseEntity.badRequest().body("id is null");
         }
-
-        Integer quantity = cart.getQuantity();
-        if (quantity == null) {
+        if (dto.quantity == null) {
             return ResponseEntity.badRequest().body("quantity is null");
         }
-        if (quantity < 1) {
+        if (dto.quantity < 1) {
             return ResponseEntity.badRequest().body("quantity is less than 1");
         }
+        if (dto.isSelected == null) {
+            return ResponseEntity.badRequest().body("isSelected is null");
+        }
 
+        Cart cart = cartService.findCartByIdAndUserId(userId, dto.id);
+        cart.setQuantity(dto.quantity);
+        cart.setIsSelected(dto.isSelected);
         cartService.updateCart(userId, cart);
         return ResponseEntity.ok().build();
     }
 
-    @Operation(summary="移除购物车商品")
+    @Operation(summary="移除购物`车商品")
     @DeleteMapping("/delete")
     public ResponseEntity<Void> deleteCartGoods(
             @RequestParam Long goodsId,

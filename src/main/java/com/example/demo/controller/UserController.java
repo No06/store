@@ -6,7 +6,6 @@ import com.example.demo.entity.UserAddress;
 import com.example.demo.entity.dto.user.UserInfoDTO;
 import com.example.demo.entity.dto.user.UserLoginDTO;
 import com.example.demo.entity.dto.user.UserRegisterDTO;
-import com.example.demo.models.response.LoginResponse;
 import com.example.demo.service.UserAddressService;
 import com.example.demo.service.UserService;
 import com.example.demo.utils.TokenUtil;
@@ -14,9 +13,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Operation;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -45,17 +46,26 @@ public class UserController {
         if (user.isPresent()) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Username already exists");
         }
-        return ResponseEntity.ok(null);
+        userService.save(new User(dto));
+        return ResponseEntity.ok().build();
     }
 
     @Operation(summary="用户登录接口")
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody UserLoginDTO dto) {
-        LoginResponse resp = userService.login(dto);
-        if (!resp.success) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resp.msg);
+        String validateMsg = dto.validate();
+        if (validateMsg != null && !validateMsg.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(validateMsg);
         }
-        return ResponseEntity.ok(resp.data);
+        Optional<User> optionalUser = userService.findByUsernameAndPassword(dto.getUsername(), dto.getPassword());
+        if (optionalUser.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("username or password is incorrect");
+        }
+        String token = TokenUtil.generateToken(optionalUser.get());
+        if (token == null || token.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to generate token");
+        }
+        return ResponseEntity.ok(token);
     }
 
     @Operation(summary="获取用户信息")
@@ -100,5 +110,44 @@ public class UserController {
         }
         userService.updateDefaultUserAddressById(addressId, userId);
         return ResponseEntity.ok().build();
+    }
+
+    // TODO: 安全
+    @GetMapping("/get/all")
+    public ResponseEntity<List<User>> getAll(@RequestAttribute Boolean isAdmin) {
+        if (isAdmin) {
+            return ResponseEntity.ok(userService.findAll());
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
+    @DeleteMapping("/remove/byId/{id}")
+    public ResponseEntity<Void> removeById(@PathVariable Long id, @RequestAttribute Boolean isAdmin) {
+        if (isAdmin) {
+            userService.removeById(id);
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
+    @PutMapping("/save")
+    public ResponseEntity<Void> save(@RequestBody User user, @RequestAttribute Boolean isAdmin) {
+        if (isAdmin) {
+            userService.save(user);
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
+    @GetMapping("/get/page")
+    public ResponseEntity<Page<User>> getPage(
+            @RequestParam Integer page,
+            @RequestParam Integer size,
+            @RequestAttribute Boolean isAdmin
+    ) {
+        if (isAdmin) {
+            return ResponseEntity.ok(userService.findPage(page, size));
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 }

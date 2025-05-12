@@ -1,9 +1,12 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.Goods;
-import com.example.demo.entity.dto.goods.GoodsCountByCategoryDTO;
+import com.example.demo.entity.GoodsCategory;
+import com.example.demo.entity.vo.GoodsCategoryWithCountVO;
 import com.example.demo.entity.dto.goods.GoodsSaveDTO;
 import com.example.demo.entity.dto.goods.GoodsShowItemDTO;
+import com.example.demo.service.GoodsCategoryService;
+import com.example.demo.service.GoodsPhotoService;
 import com.example.demo.service.GoodsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -20,10 +23,14 @@ import java.util.Optional;
 @RequestMapping("/goods")
 public class GoodsController {
     private final GoodsService service;
+    private final GoodsCategoryService categoryService;
+    private final GoodsPhotoService photoService;
 
     @Autowired
-    public GoodsController(GoodsService service) {
+    public GoodsController(GoodsService service, GoodsCategoryService categoryService, GoodsPhotoService photoService) {
         this.service = service;
+        this.categoryService = categoryService;
+        this.photoService = photoService;
     }
 
     @Operation(summary="获取所有商品")
@@ -119,13 +126,28 @@ public class GoodsController {
 
     @Operation(summary="统计分类中商品数")
     @GetMapping("/getCountByCategory")
-    public List<GoodsCountByCategoryDTO> getCountByCategory() {
+    public List<GoodsCategoryWithCountVO> getCountByCategory() {
         return service.countByCategory();
     }
 
     @Operation(summary="保存商品")
     @PutMapping("/save")
-    public ResponseEntity<String> updateGoods(@RequestBody GoodsSaveDTO goods) {
+    public ResponseEntity<String> save(@RequestBody GoodsSaveDTO dto) {
+        Goods goods = new Goods(dto);
+
+        if (goods.getCategory().getId() != null) {
+            service.save(goods);
+            return ResponseEntity.ok().build();
+        }
+        if (goods.getCategory().getName() == null) {
+            return ResponseEntity.badRequest().body("categoryName is null");
+        }
+        GoodsCategory category = categoryService.findByName(goods.getCategory().getName());
+        if (category == null) {
+            category = categoryService.save(goods.getCategory());
+        }
+        goods.setCategory(category);
+
         service.save(goods);
         return ResponseEntity.ok().build();
     }

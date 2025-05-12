@@ -10,4 +10,8 @@ import org.springframework.stereotype.Repository;
 public interface GoodsCategoryRepository extends JpaRepository<GoodsCategory, Long>, JpaSpecificationExecutor<GoodsCategory> {
     @Transactional
     void removeById(Long id);
+
+    boolean existsByName(String name);
+
+    GoodsCategory findByName(String name);
 }

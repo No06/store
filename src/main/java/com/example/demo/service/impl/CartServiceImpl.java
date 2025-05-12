@@ -23,6 +23,11 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
+    public Cart findCartByIdAndUserId(Long id, Long userId) {
+        return cartRepository.findByIdAndUserId(id, userId);
+    }
+
+    @Override
     public Long quantitySumByUserId(Long userId) {
         return cartRepository.quantitySumByUserId(userId);
     }

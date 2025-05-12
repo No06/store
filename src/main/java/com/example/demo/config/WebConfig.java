@@ -11,7 +11,8 @@ public class WebConfig implements WebMvcConfigurer {
 			"/cart/**",
 			"/goods/update", "/goods/delete",
 			"/order/**",
-			"/address/**"
+			"/address/**",
+			"/carousel/save", "/carousel/delete",
 	};
 	private final String[] excludes = {
 			"/user/register",

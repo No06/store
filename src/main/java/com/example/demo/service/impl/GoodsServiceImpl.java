@@ -3,8 +3,7 @@ package com.example.demo.service.impl;
 import com.example.demo.entity.Goods;
 import com.example.demo.entity.GoodsCategory;
 import com.example.demo.entity.GoodsPhoto;
-import com.example.demo.entity.dto.goods.GoodsCountByCategoryDTO;
-import com.example.demo.entity.dto.goods.GoodsSaveDTO;
+import com.example.demo.entity.vo.GoodsCategoryWithCountVO;
 import com.example.demo.entity.dto.goods.GoodsShowItemDTO;
 import com.example.demo.repository.GoodsRepository;
 import com.example.demo.service.GoodsService;
@@ -113,38 +112,40 @@ public class GoodsServiceImpl implements GoodsService {
     }
 
     @Override
-    public void save(GoodsSaveDTO dto) {
-        Goods oldGoods;
-        Optional<Goods> result = repository.findById(dto.id);
-        if (result.isEmpty()) {
-            Goods newGoods = new Goods(dto);
-            dto.photos.forEach((photo) -> photo.setGoods(newGoods));
+    public void save(Goods newGoods) {
+        if (newGoods.getId() == null) {
+            newGoods.getPhotos().forEach((photo) -> photo.setGoods(newGoods));
             repository.save(newGoods);
             return;
         }
 
-        oldGoods = result.get();
-        if (dto.name != null) {
-            oldGoods.setName(dto.name);
+        Optional<Goods> optionalGoods = repository.findById(newGoods.getId());
+        if (optionalGoods.isEmpty()) {
+            throw new RuntimeException("id: " + newGoods.getId() + " goods not found");
         }
-        if (dto.price != null) {
-            oldGoods.setPrice(dto.price);
+
+        Goods oldGoods = optionalGoods.get();
+        if (newGoods.getName() != null) {
+            oldGoods.setName(newGoods.getName());
         }
-        if (dto.discount != null) {
-            oldGoods.setDiscount(dto.discount);
+        if (newGoods.getPrice() != null) {
+            oldGoods.setPrice(newGoods.getPrice());
         }
-        if (dto.stock != null) {
-            oldGoods.setStock(dto.stock);
+        if (newGoods.getDiscount() != null) {
+            oldGoods.setDiscount(newGoods.getDiscount());
         }
-        if (dto.description != null) {
-            oldGoods.setDescription(dto.description);
+        if (newGoods.getStock() != null) {
+            oldGoods.setStock(newGoods.getStock());
         }
-        if (dto.category != null) {
-            oldGoods.setCategory(dto.category);
+        if (newGoods.getDescription() != null) {
+            oldGoods.setDescription(newGoods.getDescription());
         }
-        if (dto.photos != null) {
+        if (newGoods.getCategory() != null) {
+            oldGoods.setCategory(newGoods.getCategory());
+        }
+        if (newGoods.getPhotos() != null) {
             oldGoods.getPhotos().clear();
-            for (GoodsPhoto image: dto.photos) {
+            for (GoodsPhoto image: newGoods.getPhotos()) {
                 oldGoods.addPhoto(image);
             }
         }
@@ -157,9 +158,9 @@ public class GoodsServiceImpl implements GoodsService {
     }
 
     @Override
-    public List<GoodsCountByCategoryDTO> countByCategory() {
+    public List<GoodsCategoryWithCountVO> countByCategory() {
         List<Object[]> result = repository.countAllByCategory();
-        return result.stream().map((e) -> new GoodsCountByCategoryDTO((GoodsCategory) e[0], (Long) e[1])).toList();
+        return result.stream().map((e) -> new GoodsCategoryWithCountVO((GoodsCategory) e[0], (Long) e[1])).toList();
     }
 
     @Override

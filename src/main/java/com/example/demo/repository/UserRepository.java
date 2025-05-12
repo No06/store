@@ -17,7 +17,7 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificationExecutor<User> {
     Optional<User> findByUsername(String username);
 
-    User findByUsernameAndPassword(String username, String password);
+    Optional<User> findByUsernameAndPassword(String username, String password);
 
     @Query("SELECT u.defaultAddress FROM User u WHERE u.id = :id")
     UserAddress findDefaultAddressById(@Param("id") Long id);

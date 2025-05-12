@@ -7,18 +7,13 @@ import org.springframework.data.domain.Page;
 
 import com.example.demo.entity.User;
 import com.example.demo.entity.UserAddress;
-import com.example.demo.entity.dto.user.UserLoginDTO;
-import com.example.demo.entity.dto.user.UserRegisterDTO;
-import com.example.demo.models.response.LoginResponse;
 
 public interface UserService {
-    String register(UserRegisterDTO dto);
-
-    LoginResponse login(UserLoginDTO dto);
-
     Optional<User> findById(Long id);
 
     Optional<User> findByUsername(String name);
+
+    Optional<User> findByUsernameAndPassword(String username, String password);
 
     UserAddress findDefaultAddressById(Long id);
 
