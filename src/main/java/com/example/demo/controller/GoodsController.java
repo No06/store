@@ -122,15 +122,19 @@ public class GoodsController {
         }
 
         Goods goods = new Goods(dto);
+        GoodsCategory category = goods.getCategory();
 
-        if (goods.getCategory().getId() != null) {
+        if (category == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("category is null");
+        }
+        if (category.getId() != null) {
             service.save(goods);
             return ResponseEntity.ok().build();
         }
-        if (goods.getCategory().getName() == null) {
+        if (category.getName() == null) {
             return ResponseEntity.badRequest().body("categoryName is null");
         }
-        GoodsCategory category = categoryService.findByName(goods.getCategory().getName());
+        category = categoryService.findByName(goods.getCategory().getName());
         if (category == null) {
             category = categoryService.save(goods.getCategory());
         }

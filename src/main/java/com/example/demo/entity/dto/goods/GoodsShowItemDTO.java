@@ -5,6 +5,7 @@ import com.example.demo.entity.GoodsCategory;
 import com.example.demo.entity.GoodsPhoto;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public class GoodsShowItemDTO {
     public final Long id;
@@ -32,6 +33,11 @@ public class GoodsShowItemDTO {
         this.discount = goods.getDiscount();
         this.stock = goods.getStock();
         this.category = goods.getCategory();
-        photo = goods.getPhotos().getFirst();
+        List<GoodsPhoto> photos = goods.getPhotos();
+        if (photos != null && !photos.isEmpty()) {
+            this.photo = photos.getFirst();
+        } else {
+            this.photo = null;
+        }
     }
 }

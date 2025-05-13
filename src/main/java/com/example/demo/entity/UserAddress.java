@@ -1,5 +1,6 @@
 package com.example.demo.entity;
 
+import com.example.demo.entity.dto.userAddress.UserAddressSaveDTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -39,4 +40,13 @@ public class UserAddress {
     @NotNull
     @Column(length = 200)
     private String address;
+
+    public UserAddress(UserAddressSaveDTO dto, Long userId) {
+        this.user = new User(userId);
+        this.name = dto.name;
+        this.phone = dto.phone;
+        this.address = dto.address;
+    }
+
+    public UserAddress() {}
 }

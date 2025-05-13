@@ -12,4 +12,5 @@ public interface UserAddressService {
     Optional<UserAddress> findById(Long id);
     List<UserAddress> findAllByUserId(Long userId);
     Long countAllByUserId(Long userId);
+    Boolean existsById(Long id);
 }

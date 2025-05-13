@@ -52,4 +52,9 @@ public class UserAddressServiceImpl implements UserAddressService {
     public Long countAllByUserId(Long userId) {
         return addressRepository.countAllByUserId(userId);
     }
+
+    @Override
+    public Boolean existsById(Long id) {
+        return addressRepository.existsById(id);
+    }
 }
