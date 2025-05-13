@@ -3,11 +3,10 @@ package com.example.demo.entity;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
+import jakarta.persistence.Table;
 import lombok.Data;
 
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.*;
 
 @Entity
 @Table(name = "goods_photo")
@@ -25,6 +24,7 @@ public class GoodsPhoto {
 
     @ManyToOne
     @JoinColumn(name = "goods_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Goods goods;
 
     @Column(nullable = false)

@@ -5,12 +5,13 @@ import com.example.demo.entity.dto.goods.GoodsSavePhotoDTO;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.OrderBy;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Data;
 
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.*;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

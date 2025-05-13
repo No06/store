@@ -2,12 +2,11 @@ package com.example.demo.entity;
 
 import com.example.demo.entity.dto.cart.UpdateCartDTO;
 import jakarta.persistence.*;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.*;
 
 @Entity
 @Table(name = "cart")
@@ -21,10 +20,12 @@ public class Cart {
     // 对应用户
     @ManyToOne
     @NotNull
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
     // 对应商品
     @ManyToOne
     @NotNull
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Goods goods;
     // 数量
     private Integer quantity;

@@ -7,6 +7,8 @@ import lombok.Data;
 
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Table(name = "carousel")
@@ -20,6 +22,7 @@ public class Carousel {
 
     @OneToOne
     @NotNull
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Goods goods;
 
     @NotNull
