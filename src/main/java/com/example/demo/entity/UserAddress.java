@@ -42,6 +42,7 @@ public class UserAddress {
     private String address;
 
     public UserAddress(UserAddressSaveDTO dto, Long userId) {
+        this.id = dto.id;
         this.user = new User(userId);
         this.name = dto.name;
         this.phone = dto.phone;
