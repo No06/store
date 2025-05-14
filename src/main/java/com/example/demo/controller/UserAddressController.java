@@ -89,23 +89,63 @@ public class UserAddressController {
         if (userId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        return ResponseEntity.ok(userAddressService.findAllByUserId(userId).stream().map(UserAddressVO::new).toList());
+        Optional<User> optionalUser = userService.findById(userId);
+        if (optionalUser.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        User user = optionalUser.get();
+        return ResponseEntity.ok(userAddressService.findAllByUserId(userId).stream().map(e -> {
+            boolean isDefault = user.getDefaultAddress() != null && user.getDefaultAddress().getId().equals(e.getId());
+            return new UserAddressVO(e, isDefault);
+        }).toList());
     }
 
     @Operation(summary="根据ID查询地址", description="普通用户只能查询自己的，管理员则无限制")
     @GetMapping("/get/byId/{id}")
-    public ResponseEntity<UserAddressVO> getById(@PathVariable Long id, @RequestAttribute Long userId, @RequestAttribute Boolean isAdmin) {
+    public ResponseEntity<?> getById(@PathVariable Long id, @RequestAttribute Long userId, @RequestAttribute Boolean isAdmin) {
         if (userId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        Optional<UserAddress> userAddress = userAddressService.findById(id);
-        if (isAdmin) {
-            if (userAddress.isPresent()) return ResponseEntity.ok(new UserAddressVO(userAddress.get()));
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        Optional<User> optionalUser = userService.findById(userId);
+        if (optionalUser.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
-        if (userAddress.isPresent() && userAddress.get().getUser().getId().equals(userId)) {
-            return ResponseEntity.ok(new UserAddressVO(userAddress.get()));
+        User user = optionalUser.get();
+        Optional<UserAddress> userAddress = userAddressService.findById(id);
+        if (userAddress.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("address not found");
+        }
+        boolean isDefault = user.getDefaultAddress() != null && user.getDefaultAddress().getId().equals(id);
+        if (isAdmin) {
+            return ResponseEntity.ok(new UserAddressVO(userAddress.get(), isDefault));
+        }
+        if (userAddress.get().getUser().getId().equals(userId)) {
+            return ResponseEntity.ok(new UserAddressVO(userAddress.get(), isDefault));
         }
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+    }
+
+    @Operation(summary = "设为默认收货地址", description = "需要登录")
+    @PatchMapping("/setDefault")
+    public ResponseEntity<String> setDefault(@RequestAttribute Long userId, @RequestParam Long id) {
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        Optional<User> optionalUser = userService.findById(userId);
+        if (optionalUser.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("user not found");
+        }
+        User user = optionalUser.get();
+        Optional<UserAddress> optionalUserAddress = userAddressService.findById(id);
+        if (optionalUserAddress.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("address not found");
+        }
+        UserAddress userAddress = optionalUserAddress.get();
+        if (!userAddress.getUser().getId().equals(userId)) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("address does not exist");
+        }
+        user.setDefaultAddress(userAddress);
+        userService.save(user);
+        return ResponseEntity.ok().build();
     }
 }

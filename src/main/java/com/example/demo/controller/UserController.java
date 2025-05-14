@@ -87,13 +87,6 @@ public class UserController {
         }
     }
 
-    @Operation(summary="获取默认地址", description = "需要登录")
-    @GetMapping("/get/defaultAddress")
-    public ResponseEntity<UserAddress> getDefaultAddress(@RequestAttribute Long userId) {
-        UserAddress address = userService.findDefaultAddressById(userId);
-        return ResponseEntity.ok(address);
-    }
-
     @Operation(summary="更新默认地址", description = "需要登录")
     @PutMapping("/update/defaultAddress")
     public ResponseEntity<String> updateDefaultAddress(@RequestParam Long addressId, @RequestAttribute Long userId) {
