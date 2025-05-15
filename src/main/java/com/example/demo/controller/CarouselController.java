@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.Carousel;
+import com.example.demo.entity.Goods;
 import com.example.demo.entity.dto.carousel.CarouselSaveDTO;
 import com.example.demo.entity.vo.CarouselVO;
 import com.example.demo.service.CarouselService;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @Tag(name="轮播图接口")
 @RestController
@@ -50,6 +52,10 @@ public class CarouselController {
         }
         if (dto.goodsId == null) {
             return ResponseEntity.badRequest().body("goodsId is null");
+        }
+        Optional<Carousel> carousel = carouselService.findByGoodsId(dto.goodsId);
+        if (carousel.isPresent()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("goods carousel already exist");
         }
         carouselService.save(new Carousel(dto));
         return ResponseEntity.ok().build();

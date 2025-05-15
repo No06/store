@@ -37,6 +37,11 @@ public class CarouselServiceImpl implements CarouselService {
     }
 
     @Override
+    public Optional<Carousel> findByGoodsId(Long goodsId) {
+        return repository.findByGoodsId(goodsId);
+    }
+
+    @Override
     public boolean existsById(Long id) {
         return repository.existsById(id);
     }

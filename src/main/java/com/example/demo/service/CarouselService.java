@@ -10,6 +10,7 @@ public interface CarouselService {
     Page<Carousel> findByPage(Integer page, Integer size);
     List<Carousel> findAll();
     Optional<Carousel> findById(Long id);
+    Optional<Carousel> findByGoodsId(Long goodsId);
     boolean existsById(Long id);
     Carousel save(Carousel carousel);
     void deleteById(Long id);
