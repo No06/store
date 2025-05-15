@@ -9,7 +9,7 @@ public class WebConfig implements WebMvcConfigurer {
 	private final String[] adds = {
 			"/user/**",
 			"/cart/**",
-			"/goods/save", "/goods/delete",
+			"/goods/save", "/goods/delete/**",
 			"/order/**",
 			"/address/**",
 			"/carousel/save", "/carousel/delete",

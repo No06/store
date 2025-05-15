@@ -1,8 +1,10 @@
 package com.example.demo.entity.vo;
 
 import com.example.demo.entity.Cart;
+import com.example.demo.entity.GoodsPhoto;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public class CartVO {
     public final Long id;
@@ -21,7 +23,12 @@ public class CartVO {
         goodsId = cart.getGoods().getId();
         goodsName = cart.getGoods().getName();
         goodsDescription = cart.getGoods().getDescription();
-        goodsPhotoUrl = cart.getGoods().getPhotos().getFirst().getPhoto_url();
+        List<GoodsPhoto> photos = cart.getGoods().getPhotos();
+        if (photos != null && !photos.isEmpty()) {
+            goodsPhotoUrl = photos.getFirst().getPhoto_url();
+        } else {
+            goodsPhotoUrl = null;
+        }
         goodsPrice = cart.getGoods().getPrice();
         goodsDiscount = cart.getGoods().getDiscount();
         goodsStock = cart.getGoods().getStock();
