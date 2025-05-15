@@ -77,7 +77,7 @@ public class GoodsController {
     }
 
     @Operation(summary="分页获取商品")
-    @RequestMapping("/findAllByPage")
+    @PostMapping("/findAllByPage")
     public Page<Goods> findAllByPage(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) Long category_id,
